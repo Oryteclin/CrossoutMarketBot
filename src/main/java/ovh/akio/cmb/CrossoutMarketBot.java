@@ -88,6 +88,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
         this.timerWatch = new TimerWatch(event.getJDA());
         this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
         Logger.info("Bot ready !");
+        event.getJDA().getPresence().setGame(Game.playing("marketbot in" + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);
     }
 
@@ -168,10 +169,12 @@ public class CrossoutMarketBot extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         BotUtils.sendToLog("Hey ! I've joined the server `" + event.getGuild().getName() + "`");
+        event.getJDA().getPresence().setGame(Game.playing("marketbot in" + event.getJDA().getGuilds().size() + " servers."));
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        BotUtils.sendToLog("Hey ! I've joined the server `" + event.getGuild().getName() + "`");
+        BotUtils.sendToLog("Hey ! I've left the server `" + event.getGuild().getName() + "`");
+        event.getJDA().getPresence().setGame(Game.playing("marketbot in" + event.getJDA().getGuilds().size() + " servers."));
     }
 }
