@@ -175,6 +175,6 @@ public class CrossoutMarketBot extends ListenerAdapter {
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         BotUtils.sendToLog("Hey ! I've left the server `" + event.getGuild().getName() + "`");
-        event.getJDA().getPresence().setGame(Game.playing("marketbot in" + event.getJDA().getGuilds().size() + " servers."));
+        event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
     }
 }
