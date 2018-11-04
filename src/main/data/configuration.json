@@ -1,0 +1,6 @@
+{
+  "token": {
+    "release": "<production token here>",
+    "indev": "<test token here"
+  }
+}
