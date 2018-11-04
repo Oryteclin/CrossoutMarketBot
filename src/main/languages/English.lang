@@ -1,0 +1,63 @@
+Command.Invite = Click here to invite the bot.
+Command.NotFound = Huh, this command does not exists :cry: :cry:
+
+Command.Changelog.Description = Show changelog.
+
+Command.Help.Description = Some helpful help :eyes:
+Command.Help.Embed.Description = Oh ? You need some help with the commands ? Got it !
+
+Command.Item.Description = Search for an item in the CrossoutDB Item Database.
+Command.Item.NoItemFound = No item found for query `%s`.
+Command.Item.Title = Item list
+Command.Item.CantProcess = Couldn't process your request : %s.
+
+Command.Stats.Description = Get the bot stats.
+Command.Stats.Uptime = Uptime
+Command.Stats.Watchers = Watchers
+Command.Stats.Guilds = Discord Servers
+Command.Stats.CommandGlobalExecute = Commands executed
+Command.Stats.CommandLocalExecute = Commands executed here
+
+Command.Support.Description = Want to get some help or ask something ?
+Command.Support.Embed.Description = Hey ! Need help, having a suggestion or want to report a bug ? Here is some useful links.
+Command.Support.Support = Bot Support Server
+Command.Support.Forum = Crossout Forum Topic
+Command.Support.Discord = Crossout Official Discord
+Command.Support.GitHub = Bot GitHub
+
+Command.Unwatch.Description = Remove the watcher on an item.
+Command.Unwatch.NoItemFound = No item found. Please check the item name with `cm:item <item name>`.
+Command.Unwatch.Removed = %s removed from your watchers ! :ok_hand:
+Command.Unwatch.Error = Whoops, something went wrong : %s.
+Command.Unwatch.MultipleFound = Multiple items found. Please check the item name with `cm:item <item name>`.
+Command.Unwatch.CantProcess = Couldn't process your request : %s
+
+Command.Watch.Description = Watch price changes for an item.
+Command.Watch.NoItemFound = No item found. Please check the item name with `cm:item <item name>`.
+Command.Watch.Added = %s has been added to your watchers list.
+Command.Watch.MultipleFound = Multiple items found. Please check the item name with `cm:item <item name>`.
+Command.Watch.CantProcess = Couldn't process your request : %s
+
+Command.WatchList.Description = Get the list of your watchers.
+Command.WatchList.Title = Your watchers
+
+Command.Language.Description = Change the language for your server.
+Command.Language.Switch = Language selected : English
+Command.Language.Unknown = This language is not available.
+
+Item.Currency = Coins
+Item.NoDescription = No description for this item.
+Item.Buy = Buy it for
+Item.Sell = Sell it for
+Item.CraftBuy = Buy Craft Items for
+Item.CraftSell = Sell Craft Items for
+Item.QueryTime = CrossoutDB API Response Time : %o ms • Updated
+
+EmbedPage.Page = Page %1$o/%2$o
+
+Watcher.Currency = Coins
+Watcher.RefreshError = Sorry, but something went wrong while getting information about the item %1$s.
+Watcher.Notice = Run `cm:unwatch %1$s` in a server where I am to stop this watcher.
+
+Permission.MANAGE_MESSAGE = You can't view all items because you can't switch page with reactions. For this feature to work, I need the permission Manage Message.
+Permission.MESSAGE_EMBED_LINK = Whoops, I can't execute any command here. I need the permission `MESSAGE_EMBED_LINKS`.

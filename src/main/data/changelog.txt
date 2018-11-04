@@ -1,3 +1,8 @@
+[1.6]
+• Added Language Support - Contribute on GitHub !
+• Added Language Command (cm:lang)
+• Language available : French, English
+
 [1.5] - The OpenSource Update
 • (Code) CommandManager / Command updated.
 • (Code) Multiple code rewriting.

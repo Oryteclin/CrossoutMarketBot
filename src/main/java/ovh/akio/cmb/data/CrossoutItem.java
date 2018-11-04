@@ -2,7 +2,7 @@ package ovh.akio.cmb.data;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.json.JSONObject;
-import ovh.akio.cmb.impl.EmbedItem;
+import ovh.akio.cmb.impl.embed.EmbedItem;
 import ovh.akio.cmb.utils.BotUtils;
 
 import java.awt.*;
@@ -22,7 +22,7 @@ public class CrossoutItem implements EmbedItem {
     private double craftSell;
     private double craftBuy;
 
-    private boolean craftable = true;
+    private boolean craftable;
     private String lastUpdate;
     private Date lastUpdateDate;
 
@@ -67,10 +67,6 @@ public class CrossoutItem implements EmbedItem {
         return description;
     }
 
-    public String getRarity() {
-        return rarity;
-    }
-
     public double getMarketSell() {
         return marketSell;
     }
@@ -89,14 +85,6 @@ public class CrossoutItem implements EmbedItem {
 
     public boolean isCraftable() {
         return craftable;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public Date getLastUpdateDate() {
-        return lastUpdateDate;
     }
 
     @Override

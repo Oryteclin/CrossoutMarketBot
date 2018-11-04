@@ -1,4 +1,4 @@
-package ovh.akio.cmb.impl;
+package ovh.akio.cmb.impl.embed;
 
 public interface EmbedItem {
 

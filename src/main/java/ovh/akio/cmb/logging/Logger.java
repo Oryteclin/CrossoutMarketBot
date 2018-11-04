@@ -2,16 +2,17 @@ package ovh.akio.cmb.logging;
 
 public class Logger {
 
-    public static boolean showInfo = true;
-    public static boolean showDebug = true;
-    public static boolean showWarning = true;
-    public static boolean showError = true;
-    public static boolean showFatal = true;
-
-    private static int charLimit = 140;
-    private static int charLabel = 13;
+    private static boolean showInfo = true;
+    private static boolean showDebug = true;
+    private static boolean showWarning = true;
+    private static boolean showError = true;
+    private static boolean showFatal = true;
 
     private static void prettyPrint(String str, Console.ForegroundColor foregroundColor, Console.BackgroundColor backgroundColor) {
+
+        int charLimit = 140;
+        int charLabel = 13;
+
         Console.resetColors();
         if(foregroundColor!=null) Console.setForegroundColor(foregroundColor);
         if(backgroundColor!=null) Console.setBackgroundColor(backgroundColor);
@@ -27,7 +28,7 @@ public class Logger {
                 }
 
                 Console.resetColors();
-                Console.writeLine("");
+                Console.writeWithNewLine("");
                 for(int i = 0 ; i <= charLabel-1 ; i++) {
                     Console.write(".");
                 }
@@ -48,7 +49,7 @@ public class Logger {
             charPosition++;
         }
         Console.resetColors();
-        Console.writeLine("");
+        Console.writeWithNewLine("");
     }
 
     public static void info(String str) {
@@ -89,6 +90,26 @@ public class Logger {
         Console.setForegroundColor(Console.ForegroundColor.WHITE);
         Console.write("    FATAL    ");
         prettyPrint(str, Console.ForegroundColor.RED, Console.BackgroundColor.WHITE);
+    }
+
+    public static void setShowInfo(boolean showInfo) {
+        Logger.showInfo = showInfo;
+    }
+
+    public static void setShowDebug(boolean showDebug) {
+        Logger.showDebug = showDebug;
+    }
+
+    public static void setShowWarning(boolean showWarning) {
+        Logger.showWarning = showWarning;
+    }
+
+    public static void setShowError(boolean showError) {
+        Logger.showError = showError;
+    }
+
+    public static void setShowFatal(boolean showFatal) {
+        Logger.showFatal = showFatal;
     }
 
 }

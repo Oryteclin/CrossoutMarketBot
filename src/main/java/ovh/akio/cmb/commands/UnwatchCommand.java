@@ -1,11 +1,9 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
-import ovh.akio.cmb.data.WatchMemory;
-import ovh.akio.cmb.impl.Command;
+import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
 
@@ -24,8 +22,8 @@ public class UnwatchCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Remove the watcher on an item.";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Unwatch.Description");
     }
 
     @Override
@@ -47,55 +45,55 @@ public class UnwatchCommand extends Command {
 
         WebAPI webAPI = new WebAPI();
 
-        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message -> {
-            webAPI.search(query, (result) -> {
-                if(result.size() == 0) {
-                    message.editMessage(
-                            new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("No item found. Please check the item name with `cm:item <item name>`")
-                                    .setColor(Color.RED)
-                                    .build()
-                    ).queue();
-                }else if(result.size() == 1) {
-                    this.getBot().getTimerWatch().removeWatch(event.getAuthor(), result.get(0), aVoid -> {
+        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message ->
+                webAPI.search(query, (result) -> {
+                    if(result.size() == 0) {
                         message.editMessage(
                                 new EmbedBuilder()
-                                        .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription(result.get(0).getName() + " removed from your watchers ! :ok_hand:")
-                                        .setColor(Color.GREEN)
-                                        .build()
-                        ).queue();
-                    }, e -> {
-                        BotUtils.reportException(e);
-                        message.editMessage(
-                                new EmbedBuilder()
-                                        .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription("Whoops, something went wrong : " + e.getMessage())
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(this.getTranslation(event, "Command.Unwatch.NoItemFound"))
                                         .setColor(Color.RED)
                                         .build()
                         ).queue();
-                    });
-                }else{
+                    }else if(result.size() == 1) {
+                        this.getBot().getTimerWatch().removeWatch(event.getAuthor(), result.get(0), aVoid ->
+                                        message.editMessage(
+                                                new EmbedBuilder()
+                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Remove"), result.get(0).getName()))
+                                                        .setColor(Color.GREEN)
+                                                        .build()
+                                        ).queue()
+                                , e -> {
+                                    BotUtils.reportException(e);
+                                    message.editMessage(
+                                            new EmbedBuilder()
+                                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                    .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
+                                                    .setColor(Color.RED)
+                                                    .build()
+                                    ).queue();
+                                });
+                    }else{
+                        message.editMessage(
+                                new EmbedBuilder()
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(this.getTranslation(event, "Command.Unwatch.MultipleFound"))
+                                        .setColor(Color.RED)
+                                        .build()
+                        ).queue();
+                    }
+                }, (error) -> {
+                    BotUtils.reportException(error);
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("Multiple items found. Please check the item name with `cm:item <item name>`")
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.CantProcess"), error.getMessage()))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
-                }
-            }, (error) -> {
-                BotUtils.reportException(error);
-                message.editMessage(
-                        new EmbedBuilder()
-                                .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                .setDescription(String.format("Couldn't process your request : %s", error.getMessage()))
-                                .setColor(Color.RED)
-                                .build()
-                ).queue();
-            });
-        });
-
+                })
+        );
     }
+
 }

@@ -8,17 +8,14 @@ import ovh.akio.cmb.throwables.WebRequestFailed;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class WebAPI {
 
-    private static String ITEMS = "https://crossoutdb.com/api/v1/items";
     private static String ITEMQUERY = "https://crossoutdb.com/api/v1/items?query=%s";
     private static String ITEM = "https://crossoutdb.com/api/v1/item/%d";
 
