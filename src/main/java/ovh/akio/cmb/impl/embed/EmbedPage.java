@@ -1,4 +1,4 @@
-package ovh.akio.cmb.impl;
+package ovh.akio.cmb.impl.embed;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;

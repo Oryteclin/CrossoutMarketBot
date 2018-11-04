@@ -1,7 +1,7 @@
 package ovh.akio.cmb;
 
 import ovh.akio.cmb.commands.*;
-import ovh.akio.cmb.impl.CommandManager;
+import ovh.akio.cmb.impl.command.CommandManager;
 
 public class CrossoutMarketCommand extends CommandManager {
 

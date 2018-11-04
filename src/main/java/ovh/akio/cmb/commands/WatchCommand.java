@@ -1,19 +1,15 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
-import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
-import ovh.akio.cmb.impl.Command;
-import ovh.akio.cmb.impl.EmbedPage;
+import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class WatchCommand extends Command {
 

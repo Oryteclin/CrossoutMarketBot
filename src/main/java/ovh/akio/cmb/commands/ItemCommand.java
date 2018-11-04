@@ -4,8 +4,8 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
-import ovh.akio.cmb.impl.Command;
-import ovh.akio.cmb.impl.EmbedPage;
+import ovh.akio.cmb.impl.command.Command;
+import ovh.akio.cmb.impl.embed.EmbedPage;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
 

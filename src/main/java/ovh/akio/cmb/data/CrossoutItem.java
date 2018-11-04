@@ -2,7 +2,7 @@ package ovh.akio.cmb.data;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.json.JSONObject;
-import ovh.akio.cmb.impl.EmbedItem;
+import ovh.akio.cmb.impl.embed.EmbedItem;
 import ovh.akio.cmb.utils.BotUtils;
 
 import java.awt.*;

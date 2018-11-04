@@ -3,7 +3,7 @@ package ovh.akio.cmb.commands;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
-import ovh.akio.cmb.impl.Command;
+import ovh.akio.cmb.impl.command.Command;
 
 import java.awt.*;
 import java.util.ArrayList;
