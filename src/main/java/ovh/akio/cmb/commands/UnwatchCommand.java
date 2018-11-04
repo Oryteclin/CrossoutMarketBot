@@ -22,8 +22,8 @@ public class UnwatchCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Remove the watcher on an item.";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Unwatch.Description");
     }
 
     @Override
@@ -50,8 +50,8 @@ public class UnwatchCommand extends Command {
                 if(result.size() == 0) {
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("No item found. Please check the item name with `cm:item <item name>`")
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(this.getTranslation(event, "Command.Unwatch.NoItemFound"))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
@@ -59,8 +59,8 @@ public class UnwatchCommand extends Command {
                     this.getBot().getTimerWatch().removeWatch(event.getAuthor(), result.get(0), aVoid -> {
                         message.editMessage(
                                 new EmbedBuilder()
-                                        .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription(result.get(0).getName() + " removed from your watchers ! :ok_hand:")
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Remove"), result.get(0).getName()))
                                         .setColor(Color.GREEN)
                                         .build()
                         ).queue();
@@ -68,8 +68,8 @@ public class UnwatchCommand extends Command {
                         BotUtils.reportException(e);
                         message.editMessage(
                                 new EmbedBuilder()
-                                        .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription("Whoops, something went wrong : " + e.getMessage())
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
                                         .setColor(Color.RED)
                                         .build()
                         ).queue();
@@ -77,8 +77,8 @@ public class UnwatchCommand extends Command {
                 }else{
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("Multiple items found. Please check the item name with `cm:item <item name>`")
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(this.getTranslation(event, "Command.Unwatch.MultipleFound"))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
@@ -87,8 +87,8 @@ public class UnwatchCommand extends Command {
                 BotUtils.reportException(error);
                 message.editMessage(
                         new EmbedBuilder()
-                                .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                .setDescription(String.format("Couldn't process your request : %s", error.getMessage()))
+                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.CantProcess"), error.getMessage()))
                                 .setColor(Color.RED)
                                 .build()
                 ).queue();

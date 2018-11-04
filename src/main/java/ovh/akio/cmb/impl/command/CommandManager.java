@@ -42,12 +42,7 @@ public abstract class CommandManager {
 
         if(event.getMessage().getContentRaw().startsWith(this.prefix)) {
             if(this.isCommandRegistered(messageLabel)) {
-                if(event.getGuild() != null) {
-                    Logger.debug("Command " + messageLabel + " executed on " + event.getGuild().getName() + " by " + event.getAuthor().getName());
-                }else{
-                    Logger.debug("Command " + messageLabel + " executed in DM by " + event.getAuthor().getName());
-                }
-
+                Logger.debug("Command " + messageLabel + " executed on " + event.getGuild().getName() + " by " + event.getAuthor().getName());
                 this.getCommand(messageLabel).execute(event);
                 return ExecuteResponse.EXECUTED;
             }

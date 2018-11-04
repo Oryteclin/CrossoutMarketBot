@@ -1,6 +1,7 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.impl.command.Command;
@@ -22,8 +23,8 @@ public class ChangelogCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Show changelog";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Changelog.Description");
     }
 
     @Override
@@ -41,7 +42,7 @@ public class ChangelogCommand extends Command {
         BotUtils.getFileContent(new File("data/changelog.txt"), (changelog) -> {
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
+            builder.setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
             builder.setDescription(String.format("```%s```", changelog));
             builder.setColor(Color.white);
             event.getChannel().sendMessage(builder.build()).queue();

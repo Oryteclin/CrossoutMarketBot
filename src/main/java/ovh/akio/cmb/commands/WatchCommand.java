@@ -23,8 +23,8 @@ public class WatchCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Watch price changes for an item.";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Watch.Description");
     }
 
     @Override
@@ -51,8 +51,8 @@ public class WatchCommand extends Command {
                 if(result.size() == 0) {
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("No item found. Please check the item name with `cm:item <item name>`")
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(this.getTranslation(event, "Command.Watch.NoItemFound"))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
@@ -61,8 +61,8 @@ public class WatchCommand extends Command {
                     this.getBot().getTimerWatch().addWatch(memory, aVoid -> {
                         message.editMessage(
                                 new EmbedBuilder()
-                                        .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription(result.get(0).getName() + " has been added to your watchers list.")
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), result.get(0).getName()))
                                         .setColor(Color.GREEN)
                                         .build()
                         ).queue();
@@ -71,8 +71,8 @@ public class WatchCommand extends Command {
                 }else{
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription("Multiple items found. Please check the item name with `cm:item <item name>`")
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(this.getTranslation(event, "Command.Watch.MultipleFound"))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
@@ -81,8 +81,8 @@ public class WatchCommand extends Command {
                 BotUtils.reportException(error);
                 message.editMessage(
                         new EmbedBuilder()
-                                .setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                .setDescription(String.format("Couldn't process your request : %s", error.getMessage()))
+                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                .setDescription(String.format(this.getTranslation(event, "Command.Watch.CantProcess"), error.getMessage()))
                                 .setColor(Color.RED)
                                 .build()
                 ).queue();

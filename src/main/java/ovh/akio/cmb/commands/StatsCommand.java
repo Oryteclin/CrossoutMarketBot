@@ -20,8 +20,8 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Get the bot stats";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Stats.Description");
     }
 
     @Override
@@ -39,15 +39,15 @@ public class StatsCommand extends Command {
 
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
-        builder.setDescription("Here is some cool stats !");
+        builder.setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
+        builder.setDescription(this.getTranslation(event, "Command.Stats.Description"));
         builder.setColor(Color.CYAN);
 
-        builder.addField("Uptime", this.getBot().getUptime(), false);
-        builder.addField("Watchers", this.getBot().getTimerWatch().getWatcherCount() + "", false);
-        builder.addField("Discord Servers", event.getJDA().getGuilds().size() + "", false);
-        builder.addField("Commands executed here", this.getBot().getGuildCommandCount(event.getGuild()) + "", false);
-        builder.addField("Commands executed", this.getBot().getGlobalCommandCount() + "", false);
+        builder.addField(this.getTranslation(event, "Command.Stats.Uptime"), this.getBot().getUptime(), false);
+        builder.addField(this.getTranslation(event, "Command.Stats.Watchers"), this.getBot().getTimerWatch().getWatcherCount() + "", false);
+        builder.addField(this.getTranslation(event, "Command.Stats.Guilds"), event.getJDA().getGuilds().size() + "", false);
+        builder.addField(this.getTranslation(event, "Command.Stats.CommandLocalExecute"), this.getBot().getGuildCommandCount(event.getGuild()) + "", false);
+        builder.addField(this.getTranslation(event, "Command.Stats.CommandGlobalExecute"), this.getBot().getGlobalCommandCount() + "", false);
 
         event.getChannel().sendMessage(builder.build()).queue();
 

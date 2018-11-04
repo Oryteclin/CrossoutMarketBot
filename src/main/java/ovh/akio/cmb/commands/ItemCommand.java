@@ -25,8 +25,8 @@ public class ItemCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Search for an item in the CrossoutDB Item Database";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Item.Description");
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ItemCommand extends Command {
                 if(result.size() == 0) {
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setDescription(String.format("No item found for query `%s`", query))
+                                    .setDescription(String.format(this.getTranslation(event, "Command.Item.NoItemFound"), query))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
@@ -75,7 +75,7 @@ public class ItemCommand extends Command {
                         @Override
                         public EmbedBuilder getEmbed() {
                             EmbedBuilder builder = new EmbedBuilder();
-                            builder.setTitle("Item list");
+                            builder.setTitle(getTranslation(event, "Command.Item.Title"));
                             return builder;
                         }
                     };
@@ -84,7 +84,7 @@ public class ItemCommand extends Command {
                 BotUtils.reportException(error);
                 message.editMessage(
                         new EmbedBuilder()
-                                .setDescription(String.format("Couldn't process your request : %s", error.getMessage()))
+                                .setDescription(String.format(this.getTranslation(event, "Command.Item.CantProcess"), error.getMessage()))
                                 .setColor(Color.RED)
                                 .build()
                 ).queue();

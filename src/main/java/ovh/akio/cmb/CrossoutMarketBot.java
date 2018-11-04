@@ -4,14 +4,10 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONObject;
 import ovh.akio.cmb.logging.Logger;
@@ -21,7 +17,6 @@ import ovh.akio.cmb.utils.TimerWatch;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.nio.channels.Channel;
 import java.util.HashMap;
 import java.util.Timer;
 
@@ -32,6 +27,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
     private TimerWatch timerWatch;
     private Timer timer = new Timer();
     private Long startTime = System.currentTimeMillis();
+    private LanguageManager languageManager;
 
     public CrossoutMarketBot(boolean beta) {
         this.beta = beta;
@@ -84,9 +80,11 @@ public class CrossoutMarketBot extends ListenerAdapter {
         Guild myGuild = event.getJDA().getGuildById(508012982287073280L);
         TextChannel logs = myGuild.getTextChannelById(508020752994271242L);
         BotUtils.setReportChannel(logs);
-        Logger.info("Loading Watch Service");
+        Logger.info("Loading Watch Service...");
         this.timerWatch = new TimerWatch(event.getJDA());
         this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
+        Logger.info("Loading languages...");
+        languageManager = new LanguageManager();
         Logger.info("Bot ready !");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);
@@ -130,7 +128,6 @@ public class CrossoutMarketBot extends ListenerAdapter {
         return permissionAllowed;
     }
 
-
     private HashMap<Long, Integer> commandsTrack = new HashMap<>();
 
     public int getGuildCommandCount(Guild guild) {
@@ -150,7 +147,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
         if(!event.getAuthor().isBot() && event.getMessage().getContentRaw().startsWith(this.commandManager.getPrefix())) {
             if(event.getGuild() != null) {
                 if (!CrossoutMarketBot.checkPermission(event.getGuild(), event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
-                    event.getChannel().sendMessage("Whoops, I can't execute any command here. I need the permission `MESSAGE_EMBED_LINKS`.").queue();
+                    event.getChannel().sendMessage(this.getLanguageManager().getTranslationForGuild(event.getGuild()).getString("Permission.MESSAGE_EMBED_LINK")).queue();
                     return;
                 }
             }
@@ -159,7 +156,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
                     this.commandsTrack.put(event.getGuild().getIdLong(), this.getGuildCommandCount(event.getGuild())+1);
                     break;
                 case NOTFOUND:
-                    event.getChannel().sendMessage("Huh, this command does not exists :cry: :cry:").queue();
+                    event.getChannel().sendMessage(this.getLanguageManager().getTranslationForGuild(event.getGuild()).getString("Command.NotFound")).queue();
                     break;
             }
         }
@@ -176,5 +173,9 @@ public class CrossoutMarketBot extends ListenerAdapter {
     public void onGuildLeave(GuildLeaveEvent event) {
         BotUtils.sendToLog("Hey ! I've left the server `" + event.getGuild().getName() + "`");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 }
