@@ -27,7 +27,7 @@ public abstract class CommandManager {
     }
 
     protected void registerCommand(Command command) {
-        if(this.getCommand(command.getLabel()) != null) {
+        if(this.getCommand(command.getLabel()) == null) {
             this.commands.add(command);
         }
     }
