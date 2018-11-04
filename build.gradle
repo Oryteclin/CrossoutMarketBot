@@ -44,4 +44,8 @@ jar {
         from "$projectDir/src/main/data"
         into "$buildDir/out/data"
     }
+    copy {
+        from "$projectDir/src/main/languages"
+        into "$buildDir/out/languages"
+    }
 }
