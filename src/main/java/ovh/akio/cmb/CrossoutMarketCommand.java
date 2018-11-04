@@ -5,8 +5,8 @@ import ovh.akio.cmb.impl.command.CommandManager;
 
 public class CrossoutMarketCommand extends CommandManager {
 
-    public CrossoutMarketCommand(CrossoutMarketBot bot, String prefix) {
-        super(bot, prefix);
+    CrossoutMarketCommand(CrossoutMarketBot bot, String prefix) {
+        super(prefix);
 
         this.registerCommand(new ItemCommand(bot));
         this.registerCommand(new SupportCommand(bot));
@@ -17,7 +17,5 @@ public class CrossoutMarketCommand extends CommandManager {
         this.registerCommand(new StatsCommand(bot));
         this.registerCommand(new HelpCommand(bot));
         this.registerCommand(new LanguageCommand(bot));
-
     }
-
 }

@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONObject;
 import ovh.akio.cmb.logging.Logger;
@@ -38,7 +39,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
         );
     }
 
-    public void startBot(JSONObject object) {
+    private void startBot(JSONObject object) {
 
         JDABuilder builder = new JDABuilder(AccountType.BOT);
 
@@ -173,6 +174,52 @@ public class CrossoutMarketBot extends ListenerAdapter {
     public void onGuildLeave(GuildLeaveEvent event) {
         BotUtils.sendToLog("Hey ! I've left the server `" + event.getGuild().getName() + "`");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
+    }
+
+    @Override
+    public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
+        if(event.getAuthor().getIdLong() == 149279150648066048L) {
+            if(event.getMessage().getContentRaw().startsWith("setLogLevel:")) {
+                String level = event.getMessage().getContentRaw().replace("setLogLevel:", "");
+                switch (level) {
+                    case "debug":
+                        Logger.setShowDebug(true);
+                        Logger.setShowInfo(true);
+                        Logger.setShowWarning(true);
+                        Logger.setShowError(true);
+                        Logger.setShowFatal(true);
+                        break;
+                    case "info":
+                        Logger.setShowDebug(false);
+                        Logger.setShowInfo(true);
+                        Logger.setShowWarning(true);
+                        Logger.setShowError(true);
+                        Logger.setShowFatal(true);
+                        break;
+                    case "warning":
+                        Logger.setShowDebug(false);
+                        Logger.setShowInfo(false);
+                        Logger.setShowWarning(true);
+                        Logger.setShowError(true);
+                        Logger.setShowFatal(true);
+                        break;
+                    case "error":
+                        Logger.setShowDebug(false);
+                        Logger.setShowInfo(false);
+                        Logger.setShowWarning(false);
+                        Logger.setShowError(true);
+                        Logger.setShowFatal(true);
+                        break;
+                    case "fatal":
+                        Logger.setShowDebug(false);
+                        Logger.setShowInfo(false);
+                        Logger.setShowWarning(false);
+                        Logger.setShowError(false);
+                        Logger.setShowFatal(true);
+                        break;
+                }
+            }
+        }
     }
 
     public LanguageManager getLanguageManager() {

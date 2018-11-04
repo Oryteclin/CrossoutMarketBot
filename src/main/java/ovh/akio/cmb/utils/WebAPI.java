@@ -16,7 +16,6 @@ import java.util.function.Consumer;
 
 public class WebAPI {
 
-    private static String ITEMS = "https://crossoutdb.com/api/v1/items";
     private static String ITEMQUERY = "https://crossoutdb.com/api/v1/items?query=%s";
     private static String ITEM = "https://crossoutdb.com/api/v1/item/%d";
 

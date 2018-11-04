@@ -50,46 +50,46 @@ public class ItemCommand extends Command {
 
         WebAPI webAPI = new WebAPI();
 
-        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message -> {
-            webAPI.search(query, (result) -> {
-                long queryTime = System.currentTimeMillis() - startQuery;
-                if(result.size() == 0) {
+        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message ->
+                webAPI.search(query, (result) -> {
+                    long queryTime = System.currentTimeMillis() - startQuery;
+                    if(result.size() == 0) {
+                        message.editMessage(
+                                new EmbedBuilder()
+                                        .setDescription(String.format(this.getTranslation(event, "Command.Item.NoItemFound"), query))
+                                        .setColor(Color.RED)
+                                        .build()
+                        ).queue();
+                    }else if(result.size() == 1) {
+                        message.editMessage(result.get(0).toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                    }else{
+                        Optional<CrossoutItem> stream = result.stream().filter(crossoutItem -> crossoutItem.getName().equalsIgnoreCase(query)).findFirst();
+
+                        if(stream.isPresent()) {
+                            CrossoutItem item = stream.get();
+                            message.editMessage(item.toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                            return;
+                        }
+
+                        new EmbedPage(message, new ArrayList<>(result), 10) {
+                            @Override
+                            public EmbedBuilder getEmbed() {
+                                EmbedBuilder builder = new EmbedBuilder();
+                                builder.setTitle(getTranslation(event, "Command.Item.Title"));
+                                return builder;
+                            }
+                        };
+                    }
+                }, (error) -> {
+                    BotUtils.reportException(error);
                     message.editMessage(
                             new EmbedBuilder()
-                                    .setDescription(String.format(this.getTranslation(event, "Command.Item.NoItemFound"), query))
+                                    .setDescription(String.format(this.getTranslation(event, "Command.Item.CantProcess"), error.getMessage()))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
-                }else if(result.size() == 1) {
-                    message.editMessage(result.get(0).toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
-                }else{
-                    Optional<CrossoutItem> stream = result.stream().filter(crossoutItem -> crossoutItem.getName().equalsIgnoreCase(query)).findFirst();
-
-                    if(stream.isPresent()) {
-                        CrossoutItem item = stream.get();
-                        message.editMessage(item.toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
-                        return;
-                    }
-
-                    new EmbedPage(message, new ArrayList<>(result), 10) {
-                        @Override
-                        public EmbedBuilder getEmbed() {
-                            EmbedBuilder builder = new EmbedBuilder();
-                            builder.setTitle(getTranslation(event, "Command.Item.Title"));
-                            return builder;
-                        }
-                    };
-                }
-            }, (error) -> {
-                BotUtils.reportException(error);
-                message.editMessage(
-                        new EmbedBuilder()
-                                .setDescription(String.format(this.getTranslation(event, "Command.Item.CantProcess"), error.getMessage()))
-                                .setColor(Color.RED)
-                                .build()
-                ).queue();
-            });
-        });
+                })
+        );
     }
 
 }

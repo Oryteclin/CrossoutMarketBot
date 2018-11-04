@@ -46,48 +46,48 @@ public class WatchCommand extends Command {
 
         WebAPI webAPI = new WebAPI();
 
-        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message -> {
-            webAPI.search(query, (result) -> {
-                if(result.size() == 0) {
-                    message.editMessage(
-                            new EmbedBuilder()
-                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription(this.getTranslation(event, "Command.Watch.NoItemFound"))
-                                    .setColor(Color.RED)
-                                    .build()
-                    ).queue();
-                }else if(result.size() == 1) {
-                    WatchMemory memory = new WatchMemory(result.get(0), event.getAuthor());
-                    this.getBot().getTimerWatch().addWatch(memory, aVoid -> {
+        event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message ->
+                webAPI.search(query, (result) -> {
+                    if(result.size() == 0) {
                         message.editMessage(
                                 new EmbedBuilder()
                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), result.get(0).getName()))
-                                        .setColor(Color.GREEN)
+                                        .setDescription(this.getTranslation(event, "Command.Watch.NoItemFound"))
+                                        .setColor(Color.RED)
                                         .build()
                         ).queue();
-                    });
+                    }else if(result.size() == 1) {
+                        WatchMemory memory = new WatchMemory(result.get(0), event.getAuthor());
+                        this.getBot().getTimerWatch().addWatch(memory, aVoid ->
+                                message.editMessage(
+                                        new EmbedBuilder()
+                                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), result.get(0).getName()))
+                                                .setColor(Color.GREEN)
+                                                .build()
+                                ).queue()
+                        );
 
-                }else{
+                    }else{
+                        message.editMessage(
+                                new EmbedBuilder()
+                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                        .setDescription(this.getTranslation(event, "Command.Watch.MultipleFound"))
+                                        .setColor(Color.RED)
+                                        .build()
+                        ).queue();
+                    }
+                }, (error) -> {
+                    BotUtils.reportException(error);
                     message.editMessage(
                             new EmbedBuilder()
                                     .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                    .setDescription(this.getTranslation(event, "Command.Watch.MultipleFound"))
+                                    .setDescription(String.format(this.getTranslation(event, "Command.Watch.CantProcess"), error.getMessage()))
                                     .setColor(Color.RED)
                                     .build()
                     ).queue();
-                }
-            }, (error) -> {
-                BotUtils.reportException(error);
-                message.editMessage(
-                        new EmbedBuilder()
-                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                .setDescription(String.format(this.getTranslation(event, "Command.Watch.CantProcess"), error.getMessage()))
-                                .setColor(Color.RED)
-                                .build()
-                ).queue();
-            });
-        });
+                })
+        );
 
     }
 }

@@ -67,16 +67,16 @@ public class TimerWatch extends TimerTask {
     @Override
     public void run() {
         for (WatchMemory watchMemory : watchMemories) {
-            watchMemory.refresh((oldItem, newItem) -> {
-                watchMemory.getUser().openPrivateChannel().queue(privateChannel -> {
-                    privateChannel.sendMessage(getDiffEmbed(oldItem, newItem, privateChannel.getJDA()).build()).queue();
-                });
-            }, (e -> {
-                BotUtils.reportException(e);
-                watchMemory.getUser().openPrivateChannel().queue(privateChannel -> {
-                    privateChannel.sendMessage("Sorry, but something went wrong while getting information about the item " + watchMemory.getItem().getName()).queue();
-                });
-            }));
+            watchMemory.refresh((oldItem, newItem) ->
+                            watchMemory.getUser().openPrivateChannel().queue(privateChannel ->
+                                    privateChannel.sendMessage(getDiffEmbed(oldItem, newItem, privateChannel.getJDA()).build()).queue()
+                            )
+                    , (e -> {
+                        BotUtils.reportException(e);
+                        watchMemory.getUser().openPrivateChannel().queue(privateChannel ->
+                                privateChannel.sendMessage("Sorry, but something went wrong while getting information about the item " + watchMemory.getItem().getName()).queue()
+                        );
+                    }));
         }
     }
 
@@ -119,7 +119,7 @@ public class TimerWatch extends TimerTask {
         return null;
     }
 
-    public void addWatch(WatchMemory memory, Consumer onSuccess) {
+    public void addWatch(WatchMemory memory, Consumer<Void> onSuccess) {
         this.watchMemories.add(memory);
 
         if (this.watchers.has(memory.getUser().getId())) {
@@ -133,7 +133,7 @@ public class TimerWatch extends TimerTask {
         saveWatchers();
     }
 
-    public void removeWatch(User user, CrossoutItem item, Consumer onSuccess, Consumer<Exception> onFailure) {
+    public void removeWatch(User user, CrossoutItem item, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
         WatchMemory memory = this.findWatch(user, item);
 
         if(memory == null) {

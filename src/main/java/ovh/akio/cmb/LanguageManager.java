@@ -18,12 +18,12 @@ public class LanguageManager {
 
     public LanguageManager() {
 
-        BotUtils.getFileContent(new File("data/languages.json"), setting -> {
-            this.languageSettings = new JSONObject(setting);
-        }, e -> {
-            BotUtils.reportException(e);
-            Logger.warn("Can't load language settings file.");
-        });
+        BotUtils.getFileContent(new File("data/languages.json"), setting ->
+                        this.languageSettings = new JSONObject(setting)
+                , e -> {
+                    BotUtils.reportException(e);
+                    Logger.warn("Can't load language settings file.");
+                });
 
 
         this.translations.put(Language.English, new Translation(Language.English));
@@ -48,7 +48,7 @@ public class LanguageManager {
         }
     }
 
-    public void saveSettings() {
+    private void saveSettings() {
         try (FileWriter file = new FileWriter("data/languages.json")) {
             file.write(this.languageSettings.toString(2));
         } catch (Exception e) {

@@ -5,6 +5,7 @@ import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.logging.Logger;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public abstract class CommandManager {
 
@@ -12,27 +13,21 @@ public abstract class CommandManager {
         IGNORED, EXECUTED, NOTFOUND
     }
 
-
-    private CrossoutMarketBot bot;
     private String prefix;
 
     private ArrayList<Command> commands = new ArrayList<>();
 
-    public CommandManager(CrossoutMarketBot bot, String prefix) {
-        this.bot = bot;
+    public CommandManager(String prefix) {
         this.prefix = prefix;
     }
 
-    private boolean isCommandRegistered(String label) {
-        return this.commands.stream().anyMatch(command -> command.getLabel().equals(label) || command.getAliases().contains(label));
-    }
-
     private Command getCommand(String label) {
-        return this.commands.stream().filter(command -> command.getLabel().equals(label) || command.getAliases().contains(label)).findFirst().get();
+        Optional<Command> commandOpt = this.commands.stream().filter(command -> command.getLabel().equals(label) || command.getAliases().contains(label)).findFirst();
+        return commandOpt.orElse(null);
     }
 
-    public void registerCommand(Command command) {
-        if(!this.isCommandRegistered(command.getLabel())) {
+    protected void registerCommand(Command command) {
+        if(this.getCommand(command.getLabel()) != null) {
             this.commands.add(command);
         }
     }
@@ -41,9 +36,10 @@ public abstract class CommandManager {
         String messageLabel = event.getMessage().getContentRaw().split(" ")[0].replace(this.prefix, "");
 
         if(event.getMessage().getContentRaw().startsWith(this.prefix)) {
-            if(this.isCommandRegistered(messageLabel)) {
+            Command command = this.getCommand(messageLabel);
+            if(command != null) {
                 Logger.debug("Command " + messageLabel + " executed on " + event.getGuild().getName() + " by " + event.getAuthor().getName());
-                this.getCommand(messageLabel).execute(event);
+                command.execute(event);
                 return ExecuteResponse.EXECUTED;
             }
             return ExecuteResponse.NOTFOUND;
