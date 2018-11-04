@@ -1,6 +1,5 @@
 package ovh.akio.cmb.utils;
 
-import net.dv8tion.jda.client.entities.Application;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;

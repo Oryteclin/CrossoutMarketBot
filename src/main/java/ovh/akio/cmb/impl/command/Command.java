@@ -1,6 +1,5 @@
 package ovh.akio.cmb.impl.command;
 
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 
