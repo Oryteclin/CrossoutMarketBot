@@ -21,13 +21,15 @@ public class BotUtils {
 
     public static void reportException(Throwable throwable) {
         if(textChannel != null) {
-            String errorMessage = String.format("OOF, something went wrong. Here's the report :\n```%s```", getCustomStackTrace(throwable));
-            textChannel.sendMessage(errorMessage).queue(message -> {
-                Logger.warn(String.format("An error has occurred and has been sent to the discord logs channel. MessageID : %s", message.getId()));
-            }, e -> {
-                Logger.error("An error has occurred, but couldn't send it to the discord text channel. Printing stacktrace here.");
-                throwable.printStackTrace();
-            });
+            String[] stackTrace = getCustomStackTrace(throwable);
+            for (String stack : stackTrace) {
+                textChannel.sendMessage("```" + stack + "```").queue(message -> {
+                    Logger.warn(String.format("An error has occurred and has been sent to the discord logs channel. MessageID : %s", message.getId()));
+                }, e -> {
+                    Logger.error("An error has occurred, but couldn't send it to the discord text channel. Printing stacktrace here.");
+                    throwable.printStackTrace();
+                });
+            }
         }else{
             Logger.error("An error has occurred, but couldn't send it to the discord text channel. Printing stacktrace here.");
             throwable.printStackTrace();
@@ -40,7 +42,7 @@ public class BotUtils {
         }
     }
 
-    private static String getCustomStackTrace(Throwable aThrowable) {
+    private static String[] getCustomStackTrace(Throwable aThrowable) {
         final StringBuilder result = new StringBuilder();
         result.append(aThrowable.toString());
         final String NEW_LINE = System.getProperty("line.separator");
@@ -50,7 +52,7 @@ public class BotUtils {
             result.append( element );
             result.append( NEW_LINE );
         }
-        return result.toString();
+        return result.toString().split("(?<=\\G.{1994})");
     }
 
 
