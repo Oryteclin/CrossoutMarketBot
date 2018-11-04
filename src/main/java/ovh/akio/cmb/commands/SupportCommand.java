@@ -39,6 +39,7 @@ public class SupportCommand extends Command {
         String officialSupportDiscord = "https://discord.gg/hxAx8yP";
         String officialForumTopic = "https://forum.crossout.net/index.php?/topic/295123-crossout-market-discord-bot/";
         String officialCrossoutDiscord = "https://discord.gg/RE6ar6y";
+        String officialGitHub = "https://github.com/alexpado/CrossoutMarketBot";
 
         EmbedBuilder builder = new EmbedBuilder();
 
@@ -48,6 +49,7 @@ public class SupportCommand extends Command {
         builder.addField("Crossout Market Support", officialSupportDiscord, true);
         builder.addField("Crossout Forum Topic", officialForumTopic, true);
         builder.addField("Crossout Official Discord", officialCrossoutDiscord, true);
+        builder.addField("Bot GitHub", officialGitHub, true);
 
         event.getChannel().sendMessage(builder.build()).queue();
 
