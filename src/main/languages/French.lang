@@ -41,6 +41,10 @@ Command.Watch.CantProcess = Impossible d'honnorer la requête : %s.
 Command.WatchList.Description = Voir votre liste de watchers.
 Command.WatchList.Title = Vos watchers
 
+Command.Language.Description = Changez le langage de votre serveur.
+Command.Language.Switch = Langage selectionné : Français
+Command.Language.Unknown = Ce langage n'est pas disponible.
+
 Item.Currency = Coins
 Item.NoDescription = Pas de description pour cet item.
 Item.Buy = Achetez pour
