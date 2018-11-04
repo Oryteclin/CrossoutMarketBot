@@ -1,0 +1,42 @@
+[1.5] - The OpenSource Update
+• (Code) CommandManager / Command updated.
+• (Code) Multiple code rewriting.
+• (Code) Updated JDADiscord
+• Errors are now sent into the logs channel of the support server.
+• It's now more clear that data are from CrossoutDB.
+• Added support command.
+• Added help command.
+• Added on GitHub
+
+[1.4.3]
+• Fixed unwatch command doing weird thing without item
+• Added current price to watcher
+• Message is now Embed
+• Save watchlist
+• Added watchlist command
+
+[1.4.2]
+• Fixed unwatch command
+
+[1.4.1]
+• Added unwatch command !
+
+[1.4]
+• Added watcher ! (Hype guys)
+    Send you every 30m values change on item
+• Updated stats command
+
+[1.3]
+• Prefix is no more case sensitive
+• Removed market fee
+• Added changelog command
+• Added stats command
+• Removed HTML from item description
+
+[1.2]
+• Added Craft cost (Buy/Sell)
+• Number showing up more clearly (##,###.##)
+
+
+[1.1]
+• Fixed item without rarity not showing up.

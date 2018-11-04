@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+group 'ovh.akio.cmb'
+version '1.5-RELEASE'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'net.dv8tion:JDA:3.8.1_439'
+    compile group: 'org.json', name: 'json', version: '20090211'
+    compile group: 'net.htmlparser.jericho', name: 'jericho-html', version: '3.3'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+}
+
+jar {
+
+    delete "$projectDir/build"
+
+    baseName 'CrossoutMarket'
+    destinationDir = file("$buildDir/out")
+    manifest {
+        attributes "Main-Class": "ovh.akio.cmb.Main"
+        attributes "Class-Path": configurations.compile.collect { "libs/" + it.name }.join(" ")
+    }
+    copy {
+        into "$buildDir/out/libs"
+        from configurations.runtime
+    }
+    copy {
+        from "$projectDir/src/main/data"
+        into "$buildDir/out/data"
+    }
+}
