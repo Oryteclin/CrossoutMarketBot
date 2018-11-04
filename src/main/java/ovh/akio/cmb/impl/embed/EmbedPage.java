@@ -1,4 +1,4 @@
-package ovh.akio.cmb.impl;
+package ovh.akio.cmb.impl.embed;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -75,15 +75,15 @@ public abstract class EmbedPage extends ListenerAdapter {
 
         if(items.size() > 10) {
             if(CrossoutMarketBot.checkPermission(message.getGuild(), message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                this.message.addReaction("◀").queue(aVoid -> {
-                    this.message.addReaction("▶").queue(aVoid1 -> {
-                        this.message.addReaction("❌").queue(aVoid2 -> {
-                            refreshEmbed();
-                            this.timer.scheduleAtFixedRate(this.editorTimer, 0, 1000);
-                        });
+                this.message.addReaction("◀").queue(aVoid ->
+                        this.message.addReaction("▶").queue(aVoid1 ->
+                                this.message.addReaction("❌").queue(aVoid2 -> {
+                                    refreshEmbed();
+                                    this.timer.scheduleAtFixedRate(this.editorTimer, 0, 1000);
+                                })
 
-                    });
-                });
+                        )
+                );
             }else{
                 refreshEmbed();
                 message.getChannel().sendMessage("You can't view all items because you can't switch page with reactions. For this feature to work, I need the permission Manage Message.").queue();

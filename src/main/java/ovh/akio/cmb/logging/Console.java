@@ -3,22 +3,18 @@ package ovh.akio.cmb.logging;
 /**
  * Only For GNUU/Linux OS
  */
-public class Console {
+class Console {
 
     private static ForegroundColor foregroundColor;
     private static BackgroundColor backgroundColor;
-    private static String ANSI_RESET = "\u001B[0m";
 
     public enum ForegroundColor {
 
         WHITE("\u001B[30m"),
         RED("\u001B[31m"),
-        GREEN("\u001B[32m"),
         YELLOW("\u001B[33m"),
         BLUE("\u001B[34m"),
-        PURPLE("\u001B[35m"),
-        CYAN("\u001B[36m"),
-        GREY("\u001B[37m");
+        CYAN("\u001B[36m");
 
         private String ansi;
         ForegroundColor(String ansi) {
@@ -34,12 +30,9 @@ public class Console {
 
         WHITE("\u001B[40m"),
         RED("\u001B[41m"),
-        GREEN("\u001B[42m"),
         YELLOW("\u001B[43m"),
         BLUE("\u001B[44m"),
-        PURPLE("\u001B[45m"),
-        CYAN("\u001B[46m"),
-        GREY("\u001B[47m");
+        CYAN("\u001B[46m");
 
         private String ansi;
         BackgroundColor(String ansi) {
@@ -52,32 +45,28 @@ public class Console {
     }
 
 
-    public static void setForegroundColor(ForegroundColor foregroundColor) {
+    static void setForegroundColor(ForegroundColor foregroundColor) {
         Console.foregroundColor = foregroundColor;
     }
 
-    public static void setBackgroundColor(BackgroundColor backgroundColor) {
+    static void setBackgroundColor(BackgroundColor backgroundColor) {
         Console.backgroundColor = backgroundColor;
     }
 
-    public static void write(Object out) {
+    static void write(Object out) {
         if(foregroundColor != null) System.out.print(foregroundColor.getAnsi());
         if(backgroundColor != null) System.out.print(backgroundColor.getAnsi());
         System.out.print(out);
     }
 
-    public static void write(Object out, boolean newline) {
+    static void writeWithNewLine(Object out) {
         write(out);
-        if(newline) System.out.println();
+        System.out.println();
     }
 
-    public static void writeLine(Object out){
-        write(out, true);
-    }
-
-    public static void resetColors() {
+    static void resetColors() {
         foregroundColor = null;
         backgroundColor = null;
-        write(ANSI_RESET);
+        write("\u001B[0m");
     }
 }

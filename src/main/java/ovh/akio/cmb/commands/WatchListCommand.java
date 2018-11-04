@@ -1,13 +1,12 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.WatchMemory;
-import ovh.akio.cmb.impl.Command;
-import ovh.akio.cmb.impl.EmbedItem;
-import ovh.akio.cmb.impl.EmbedPage;
+import ovh.akio.cmb.impl.command.Command;
+import ovh.akio.cmb.impl.embed.EmbedItem;
+import ovh.akio.cmb.impl.embed.EmbedPage;
 import ovh.akio.cmb.utils.TimerWatch;
 
 import java.awt.*;
@@ -25,8 +24,8 @@ public class WatchListCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Get the list of your watchers.";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.WatchList.Description");
     }
 
     @Override
@@ -51,14 +50,14 @@ public class WatchListCommand extends Command {
             }
 
             if(items.size() == 0) {
-                message.editMessage(new EmbedBuilder().setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl()).setDescription("You haven't any watcher.").setColor(Color.ORANGE).build()).queue();
+                message.editMessage(new EmbedBuilder().setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl()).setDescription("You haven't any watcher.").setColor(Color.ORANGE).build()).queue();
             }else{
                 new EmbedPage(message, items, 10) {
                     @Override
                     public EmbedBuilder getEmbed() {
                         EmbedBuilder builder = new EmbedBuilder();
-                        builder.setTitle("Your watchers");
-                        builder.setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
+                        builder.setTitle(getTranslation(event, "Command.WatchList.Title"));
+                        builder.setAuthor(getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
                         builder.setColor(Color.white);
                         return builder;
                     }

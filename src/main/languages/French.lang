@@ -1,0 +1,63 @@
+Command.Invite = Cliquez ici pour inviter le bot.
+Command.NotFound = Huh, cette commande n'existe pas :cry: :cry:
+
+Command.Changelog.Description = Voir les notes de mise à jour.
+
+Command.Help.Description = Un peu d'aide utile :eyes:
+Command.Help.Embed.Description = Oh ? Besoin d'aide avec les commandes ? Soit !
+
+Command.Item.Description = Rechercher un item sur la base de données de CrossoutDB.
+Command.Item.NoItemFound = Aucun item trouvé correspondant à la requête `%s`.
+Command.Item.Title = Liste des items
+Command.Item.CantProcess = Impossible d'honnorer la requête : %s.
+
+Command.Stats.Description = Obtenir les statistiques du bot.
+Command.Stats.Uptime = Temps en ligne
+Command.Stats.Watchers = Watchers
+Command.Stats.Guilds = Serveurs Discord
+Command.Stats.CommandGlobalExecute = Commandes executées
+Command.Stats.CommandLocalExecute = Commandes executées ici
+
+Command.Support.Description = Besoin d'aide ou une question ?
+Command.Support.Embed.Description = Hey ! Besoin d'aide, une question ou signalement d'un problème ? Voici quelques liens utiles.
+Command.Support.Support = Serveur support du bot
+Command.Support.Forum = Topic sur le forum Crossout
+Command.Support.Discord = Discord Crossout Officiel
+Command.Support.GitHub = Bot GitHub
+
+Command.Unwatch.Description = Supprime le watcher d'un item.
+Command.Unwatch.NoItemFound = Aucun item trouvé. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.Unwatch.Removed = %s a été supprimé de vos watchers ! :ok_hand:
+Command.Unwatch.Error = Whoops, quelque chose à mal tourné : %s.
+Command.Unwatch.MultipleFound = Plusieurs items trouvés. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.Unwatch.CantProcess = Impossible d'honnorer la requête : %s.
+
+Command.Watch.Description = Surveillez les changements de prix avec un watcher.
+Command.Watch.NoItemFound = Aucun item trouvé. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.Watch.Added = %s a été ajouté à vos watchers.
+Command.Watch.MultipleFound = Plusieurs items trouvés. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.Watch.CantProcess = Impossible d'honnorer la requête : %s.
+
+Command.WatchList.Description = Voir votre liste de watchers.
+Command.WatchList.Title = Vos watchers
+
+Command.Language.Description = Changez le langage de votre serveur.
+Command.Language.Switch = Langage selectionné : Français
+Command.Language.Unknown = Ce langage n'est pas disponible.
+
+Item.Currency = Coins
+Item.NoDescription = Pas de description pour cet item.
+Item.Buy = Achetez pour
+Item.Sell = Vendez pour
+Item.CraftBuy = Achetez les items de craft pour
+Item.CraftSell = Vendez les items de craft pour
+Item.QueryTime = Temps de réponse de l'API CrossoutDB : %o ms • Dernière mise à jour
+
+EmbedPage.Page = Page %1$o/%2$o
+
+Watcher.Currency = Coins
+Watcher.RefreshError = Désolé, mais quelque chose s'est mal passé lors du chargement des informations de l'item %1$s.
+Watcher.Notice = Executez `cm:unwatch %1$s` sur un serveur ou je suis pour arrêter ce watcher.
+
+Permission.MANAGE_MESSAGE = Vous ne pouvez pas voir les autres items car vous ne pouvez pas utiliser les réactions. Pour que cela fonctionne, j'ai besoin de la permission Gérer les messages.
+Permission.MESSAGE_EMBED_LINK = Whoops, je ne peux pas traiter les commandes ici. J'ai besoin de la permission `Intégrer des liens`.

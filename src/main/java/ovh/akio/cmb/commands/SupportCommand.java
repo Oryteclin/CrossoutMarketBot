@@ -1,10 +1,9 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
-import ovh.akio.cmb.impl.Command;
+import ovh.akio.cmb.impl.command.Command;
 
 import java.util.ArrayList;
 
@@ -20,8 +19,8 @@ public class SupportCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Want to get some help or ask something ?";
+    public String getDescription(GuildMessageReceivedEvent event) {
+        return this.getTranslation(event, "Command.Support.Description");
     }
 
     @Override
@@ -43,13 +42,13 @@ public class SupportCommand extends Command {
 
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.setAuthor("Click here to invite the bot.", "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
-        builder.setDescription("Hey ! Need help, having a suggestion or want to report a bug ? Here is some useful links.");
+        builder.setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
+        builder.setDescription(this.getTranslation(event, "Command.Support.Embed.Description"));
 
-        builder.addField("Crossout Market Support", officialSupportDiscord, true);
-        builder.addField("Crossout Forum Topic", officialForumTopic, true);
-        builder.addField("Crossout Official Discord", officialCrossoutDiscord, true);
-        builder.addField("Bot GitHub", officialGitHub, true);
+        builder.addField(this.getTranslation(event, "Command.Support.Support"), officialSupportDiscord, true);
+        builder.addField(this.getTranslation(event, "Command.Support.Forum"), officialForumTopic, true);
+        builder.addField(this.getTranslation(event, "Command.Support.Discord"), officialCrossoutDiscord, true);
+        builder.addField(this.getTranslation(event, "Command.Support.GitHub"), officialGitHub, true);
 
         event.getChannel().sendMessage(builder.build()).queue();
 
