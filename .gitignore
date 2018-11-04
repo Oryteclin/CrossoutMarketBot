@@ -4,3 +4,4 @@
 .gralde/**
 build/
 build/**
+src/main/data/configuration.json
