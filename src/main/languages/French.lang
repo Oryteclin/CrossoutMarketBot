@@ -1,5 +1,6 @@
 Command.Invite = Cliquez ici pour inviter le bot.
 Command.NotFound = Huh, cette commande n'existe pas :cry: :cry:
+Command.AdminOnly = Vous devez avoir la permission ADMINISTRATEUR pour utiliser cette commande.
 
 Command.Changelog.Description = Voir les notes de mise à jour.
 

@@ -1,5 +1,6 @@
 package ovh.akio.cmb.commands;
 
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.impl.command.Command;
@@ -35,6 +36,11 @@ public class LanguageCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+
+        if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            event.getChannel().sendMessage(this.getTranslation(event, "Command.AdminOnly")).queue();
+            return;
+        }
 
         String label = event.getMessage().getContentRaw().split(" ")[0];
         String lang = event.getMessage().getContentRaw().replace(label, "").trim();
