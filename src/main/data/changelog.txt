@@ -1,3 +1,8 @@
+[1.6.1]
+• Limit cm:lang command to admins.
+• Updated translation files.
+• Watcher don't refresh instantly when the bot start.
+
 [1.6]
 • Added Language Support - Contribute on GitHub !
 • Added Language Command (cm:lang)
