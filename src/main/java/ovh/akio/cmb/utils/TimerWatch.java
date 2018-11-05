@@ -21,6 +21,7 @@ public class TimerWatch extends TimerTask {
 
     private ArrayList<WatchMemory> watchMemories = new ArrayList<>();
     private JSONObject watchers;
+    private boolean firstLoad = true;
 
     public TimerWatch(JDA jda) {
         BotUtils.getFileContent(new File("data/watchers.json"), (watchers) -> {
@@ -66,6 +67,10 @@ public class TimerWatch extends TimerTask {
 
     @Override
     public void run() {
+        if(firstLoad) {
+            firstLoad = false;
+            return;
+        }
         for (WatchMemory watchMemory : watchMemories) {
             watchMemory.refresh((oldItem, newItem) ->
                             watchMemory.getUser().openPrivateChannel().queue(privateChannel ->
