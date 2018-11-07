@@ -1,13 +1,16 @@
 package ovh.akio.cmb.data;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 import ovh.akio.cmb.impl.embed.EmbedItem;
 import ovh.akio.cmb.utils.BotUtils;
+import ovh.akio.cmb.utils.language.Translation;
 
 import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CrossoutItem implements EmbedItem {
@@ -92,7 +95,7 @@ public class CrossoutItem implements EmbedItem {
         return this.getName();
     }
 
-    public EmbedBuilder toEmbed(Long queryTime, String avatarUrl) {
+    public EmbedBuilder toEmbed(Translation tr, Long queryTime, String avatarUrl) {
 
         EmbedBuilder builder = new EmbedBuilder();
 
@@ -101,15 +104,17 @@ public class CrossoutItem implements EmbedItem {
         builder.setTitle(this.name, "https://crossoutdb.com/item/" + this.id);
         builder.setDescription(this.description);
 
-        builder.addField("Buy it for", String.format("%,.2f", this.marketSell/100) + " Gold", true);
-        builder.addField("Sell it for", String.format("%,.2f", this.marketBuy/100) + " Gold", true);
+        String currencyValue = "%,.2f %s";
+
+        builder.addField(tr.getString("Item.Buy"), String.format(currencyValue, this.marketSell/100, tr.getString("Item.Currency")), true);
+        builder.addField(tr.getString("Item.Sell"), String.format(currencyValue, this.marketBuy/100, tr.getString("Item.Currency")), true);
         if(craftable) {
-            builder.addField("Buy Craft Item for", String.format("%,.2f", this.craftSell/100) + " Gold", true);
-            builder.addField("Sell Craft Item for", String.format("%,.2f", this.craftBuy/100) + " Gold", true);
+            builder.addField(tr.getString("Item.CraftBuy"), String.format(currencyValue, this.craftSell/100, tr.getString("Item.Currency")), true);
+            builder.addField(tr.getString("Item.CraftSell"), String.format(currencyValue, this.craftBuy/100, tr.getString("Item.Currency")), true);
         }
         builder.setTimestamp(this.lastUpdateDate.toInstant());
-        builder.setFooter(String.format("CrossoutDB API Response time : %oms • Updated ", queryTime), null);
-        builder.setThumbnail(String.format("https://crossoutdb.com/img/items/%d.png", this.id));
+        builder.setFooter(String.format(tr.getString("Item.QueryTime"), queryTime), null);
+        builder.setThumbnail(this.getThumbnailImage());
 
         switch (this.rarity) {
             case "Common":
@@ -130,6 +135,11 @@ public class CrossoutItem implements EmbedItem {
 
         }
         return builder;
+    }
+
+    public String getThumbnailImage() {
+        Date today = Calendar.getInstance().getTime();
+        return String.format("https://crossoutdb.com/img/items/%o.png?d=%tY%tm%td", this.getId(), today, today, today);
     }
 
     @Override

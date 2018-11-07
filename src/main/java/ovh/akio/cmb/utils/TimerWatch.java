@@ -110,7 +110,7 @@ public class TimerWatch extends TimerTask {
             builder.addField("Sell Craft Items for :", String.format(currency, BotUtils.numberFormat(newItem.getCraftBuy()/100), craftBuyDiffStr), true);
         }
 
-        builder.setThumbnail("https://crossoutdb.com/img/items/" + newItem.getId() + ".png");
+        builder.setThumbnail(newItem.getThumbnailImage());
 
         return builder;
     }
