@@ -6,6 +6,7 @@ import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
 import ovh.akio.cmb.impl.command.Command;
+import ovh.akio.cmb.throwables.WatcherNotFoundException;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
 
@@ -67,14 +68,24 @@ public class UnwatchCommand extends Command {
                                                         .build()
                                         ).queue()
                                 , e -> {
-                                    BotUtils.reportException(e);
-                                    message.editMessage(
-                                            new EmbedBuilder()
-                                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                    .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
-                                                    .setColor(Color.RED)
-                                                    .build()
-                                    ).queue();
+                                    if(e instanceof WatcherNotFoundException) {
+                                        message.editMessage(
+                                                new EmbedBuilder()
+                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
+                                                        .setColor(Color.RED)
+                                                        .build()
+                                        ).queue();
+                                    }else{
+                                        BotUtils.reportException(e);
+                                        message.editMessage(
+                                                new EmbedBuilder()
+                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
+                                                        .setColor(Color.RED)
+                                                        .build()
+                                        ).queue();
+                                    }
                                 });
                     }else{
 

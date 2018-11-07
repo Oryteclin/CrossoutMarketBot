@@ -29,6 +29,7 @@ Command.Support.GitHub = Bot GitHub
 Command.Unwatch.Description = Remove the watcher on an item.
 Command.Unwatch.NoItemFound = No item found. Please check the item name with `cm:item <item name>`.
 Command.Unwatch.Removed = %s removed from your watchers ! :ok_hand:
+Command.Unwatch.NotFound = You're not currently watching %s.
 Command.Unwatch.Error = Whoops, something went wrong : %s.
 Command.Unwatch.MultipleFound = Multiple items found. Please check the item name with `cm:item <item name>`.
 Command.Unwatch.CantProcess = Couldn't process your request : %s
