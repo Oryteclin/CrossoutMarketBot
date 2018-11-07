@@ -62,7 +62,7 @@ public class UnwatchCommand extends Command {
                                         message.editMessage(
                                                 new EmbedBuilder()
                                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Remove"), result.get(0).getName()))
+                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Removed"), result.get(0).getName()))
                                                         .setColor(Color.GREEN)
                                                         .build()
                                         ).queue()
@@ -84,7 +84,7 @@ public class UnwatchCommand extends Command {
                                                 message.editMessage(
                                                         new EmbedBuilder()
                                                                 .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                                .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Remove"), item.getName()))
+                                                                .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Removed"), item.getName()))
                                                                 .setColor(Color.GREEN)
                                                                 .build()
                                                 ).queue()
