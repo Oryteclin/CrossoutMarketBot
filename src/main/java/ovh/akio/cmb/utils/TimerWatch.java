@@ -142,7 +142,7 @@ public class TimerWatch extends TimerTask {
         WatchMemory memory = this.findWatch(user, item);
 
         if(memory == null) {
-            onFailure.accept(new WatcherNotFoundException());
+            onFailure.accept(new WatcherNotFoundException(item));
         }else{
             this.watchMemories.remove(memory);
 

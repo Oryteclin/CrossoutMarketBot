@@ -72,7 +72,7 @@ public class UnwatchCommand extends Command {
                                         message.editMessage(
                                                 new EmbedBuilder()
                                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
+                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.NotFound"), ((WatcherNotFoundException) e).getItem().getName()))
                                                         .setColor(Color.RED)
                                                         .build()
                                         ).queue();
