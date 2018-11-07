@@ -139,7 +139,7 @@ public class CrossoutItem implements EmbedItem {
 
     public String getThumbnailImage() {
         Date today = Calendar.getInstance().getTime();
-        return String.format("https://crossoutdb.com/img/items/%o.png?d=%tY%tm%td", this.getId(), today, today, today);
+        return String.format("https://crossoutdb.com/img/items/%s.png?d=%tY%tm%td", this.getId(), today, today, today);
     }
 
     @Override
