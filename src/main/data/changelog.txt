@@ -1,3 +1,10 @@
+[1.6.2]
+• Fixed \n not being new line
+• Added forgotten translations on Item's embed
+• Trying to watch & unwatch an item with ambiguous name result in error.
+• Cache busting system.
+• Command unwatch showing proper message when watcher doesn't exists.
+
 [1.6.1]
 • Limit cm:lang command to admins.
 • Updated translation files.
