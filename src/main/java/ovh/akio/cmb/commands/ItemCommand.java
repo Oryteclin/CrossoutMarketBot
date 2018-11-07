@@ -61,13 +61,13 @@ public class ItemCommand extends Command {
                                         .build()
                         ).queue();
                     }else if(result.size() == 1) {
-                        message.editMessage(result.get(0).toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                        message.editMessage(result.get(0).toEmbed(this.getTranslation(event), queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
                     }else{
                         Optional<CrossoutItem> stream = result.stream().filter(crossoutItem -> crossoutItem.getName().equalsIgnoreCase(query)).findFirst();
 
                         if(stream.isPresent()) {
                             CrossoutItem item = stream.get();
-                            message.editMessage(item.toEmbed(queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                            message.editMessage(item.toEmbed(this.getTranslation(event), queryTime, event.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
                             return;
                         }
 

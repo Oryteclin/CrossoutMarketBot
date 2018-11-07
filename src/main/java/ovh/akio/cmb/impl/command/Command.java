@@ -2,6 +2,7 @@ package ovh.akio.cmb.impl.command;
 
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
+import ovh.akio.cmb.utils.language.Translation;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,10 @@ public abstract class Command {
 
     public String getTranslation(GuildMessageReceivedEvent event, String identifier) {
         return this.getBot().getLanguageManager().getTranslationForGuild(event.getGuild()).getString(identifier);
+    }
+
+    public Translation getTranslation(GuildMessageReceivedEvent event) {
+        return this.getBot().getLanguageManager().getTranslationForGuild(event.getGuild());
     }
 
     public abstract void execute(GuildMessageReceivedEvent event);
