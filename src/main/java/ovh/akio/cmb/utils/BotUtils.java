@@ -90,7 +90,7 @@ public class BotUtils {
     }
 
     public static String formatJSON(String json) {
-        return removeHTML(json.replace("<br>", "\\n"));
+        return removeHTML(json.replace("<br>", "\n"));
     }
 
     public static void getFileContent(File file, Consumer<String> onSuccess, Consumer<Exception> onFailure) {
