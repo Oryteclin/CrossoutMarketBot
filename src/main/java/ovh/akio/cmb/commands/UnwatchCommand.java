@@ -3,6 +3,8 @@ package ovh.akio.cmb.commands;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
+import ovh.akio.cmb.data.CrossoutItem;
+import ovh.akio.cmb.data.WatchMemory;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
@@ -75,6 +77,32 @@ public class UnwatchCommand extends Command {
                                     ).queue();
                                 });
                     }else{
+
+                        for (CrossoutItem item : result) {
+                            if(item.getName().equalsIgnoreCase(query)) {
+                                this.getBot().getTimerWatch().removeWatch(event.getAuthor(), item, aVoid ->
+                                                message.editMessage(
+                                                        new EmbedBuilder()
+                                                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                                .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Remove"), item.getName()))
+                                                                .setColor(Color.GREEN)
+                                                                .build()
+                                                ).queue()
+                                        , e -> {
+                                            BotUtils.reportException(e);
+                                            message.editMessage(
+                                                    new EmbedBuilder()
+                                                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                            .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
+                                                            .setColor(Color.RED)
+                                                            .build()
+                                            ).queue();
+                                        });
+                                return;
+                            }
+                        }
+
+
                         message.editMessage(
                                 new EmbedBuilder()
                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
