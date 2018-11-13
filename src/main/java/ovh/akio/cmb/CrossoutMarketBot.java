@@ -80,14 +80,50 @@ public class CrossoutMarketBot extends ListenerAdapter {
         return new Duration(System.currentTimeMillis() - startTime).toString();
     }
 
+    private void convertConfigurationFiles() {
+
+        File watchers = new File("data/watchers.json");
+        File language = new File("data/languages.json");
+
+        if(watchers.exists()) {
+            Logger.info("watchers.json found : Converting into MySQL Data...");
+            BotUtils.getFileContent(watchers, content -> {
+                JSONObject jsonContent = new JSONObject(content);
+                for (String userID : jsonContent.keySet()) {
+                    Long id = Long.parseLong(userID);
+                    for (int i = 0; i < jsonContent.getJSONArray(userID).length(); i++) {
+                        this.getDatabase().execute("INSERT IGNORE INTO Watchers VALUE (?, ?)", id, jsonContent.getJSONArray(userID).getInt(i));
+                    }
+                }
+                watchers.delete();
+            }, error -> {
+                Logger.warn("Can't start convert. Keeping file for converting later.");
+                Logger.error(error.getMessage());
+            });
+        }
+
+        if(language.exists()) {
+            Logger.info("languages.json found : Converting into MySQL Data...");
+            BotUtils.getFileContent(language, content -> {
+                JSONObject jsonContent = new JSONObject(content);
+                for (String guildID : jsonContent.keySet()) {
+                    this.getDatabase().execute("UPDATE DiscordGuild SET language = ? WHERE discordID = ?", jsonContent.getString(guildID), Long.parseLong(guildID));
+                }
+                language.delete();
+            }, error -> {
+                Logger.warn("Can't start convert. Keeping file for converting later.");
+                Logger.error(error.getMessage());
+            });
+        }
+
+    }
+
+
     @Override
     public void onReady(ReadyEvent event) {
         Guild myGuild = event.getJDA().getGuildById(508012982287073280L);
         TextChannel logs = myGuild.getTextChannelById(508020752994271242L);
         BotUtils.setReportChannel(logs);
-        Logger.info("Loading Watch Service...");
-        this.timerWatch = new TimerWatch(this, event.getJDA());
-        this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
         Logger.info("Loading languages...");
         languageManager = new LanguageManager(this);
         Logger.info("Registering listeners...");
@@ -102,6 +138,10 @@ public class CrossoutMarketBot extends ListenerAdapter {
                         guild.getIdLong(), guild.getName(), guild.getIconUrl() == null ? "" : guild.getIconUrl(),
                         guild.getSelfMember().getJoinDate().toEpochSecond(), guild.getOwner().getUser().getIdLong(), "English")
         );
+        this.convertConfigurationFiles();
+        Logger.info("Loading Watch Service...");
+        this.timerWatch = new TimerWatch(this, event.getJDA());
+        this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
         Logger.info("Bot ready !");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);
