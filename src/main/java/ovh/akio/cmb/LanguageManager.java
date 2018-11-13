@@ -1,31 +1,21 @@
 package ovh.akio.cmb;
 
 import net.dv8tion.jda.core.entities.Guild;
-import org.json.JSONObject;
 import ovh.akio.cmb.logging.Logger;
-import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.language.Language;
 import ovh.akio.cmb.utils.language.Translation;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public class LanguageManager {
 
-    private JSONObject languageSettings;
+    private CrossoutMarketBot bot;
     private HashMap<Language, Translation> translations = new HashMap<>();
 
-    public LanguageManager() {
-
-        BotUtils.getFileContent(new File("data/languages.json"), setting ->
-                        this.languageSettings = new JSONObject(setting)
-                , e -> {
-                    BotUtils.reportException(e);
-                    Logger.warn("Can't load language settings file.");
-                });
-
-
+    LanguageManager(CrossoutMarketBot bot) {
+        this.bot = bot;
         this.translations.put(Language.English, new Translation(Language.English));
         this.translations.put(Language.French, new Translation(Language.French));
     }
@@ -35,25 +25,24 @@ public class LanguageManager {
     }
 
     public void setTranslationForGuild(Guild guild, Language language) {
-        this.languageSettings.put(guild.getId(), language.name());
-        saveSettings();
+        this.bot.getDatabase().execute("UPDATE DiscordGuild SET language = ? WHERE discordID = ?", language.name(), guild.getIdLong());
     }
 
     public Translation getTranslationForGuild(Guild guild) {
-        if(this.languageSettings.has(guild.getId())) {
-            return this.translations.get(Language.valueOf(this.languageSettings.getString(guild.getId())));
-        }else{
-            this.setTranslationForGuild(guild, Language.English);
-            return this.translations.get(Language.English);
-        }
-    }
-
-    private void saveSettings() {
-        try (FileWriter file = new FileWriter("data/languages.json")) {
-            file.write(this.languageSettings.toString(2));
-        } catch (Exception e) {
-            BotUtils.reportException(e);
-            Logger.error("Can't save languages.json : " + e.getMessage());
+        ResultSet rs = this.bot.getDatabase().query("SELECT language FROM DiscordGuild WHERE discordID = ?", guild.getIdLong());
+        try {
+            Language language;
+            if(rs.next()) {
+                language = Language.valueOf(rs.getString("language"));
+            }else{
+                language = Language.English;
+            }
+            bot.getDatabase().close(rs);
+            return this.getTranslation(language);
+        } catch (SQLException e) {
+            Logger.warn("Unable to load guild language setting. Using English by default.");
+            this.bot.getDatabase().close(rs);
+            return this.getTranslation(Language.English);
         }
     }
 

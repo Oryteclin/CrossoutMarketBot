@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
 import ovh.akio.cmb.logging.Logger;
@@ -12,6 +13,8 @@ import ovh.akio.cmb.throwables.WatcherNotFoundException;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
@@ -19,50 +22,37 @@ import java.util.function.Consumer;
 
 public class TimerWatch extends TimerTask {
 
+    private CrossoutMarketBot bot;
     private ArrayList<WatchMemory> watchMemories = new ArrayList<>();
-    private JSONObject watchers;
     private boolean firstLoad = true;
 
-    public TimerWatch(JDA jda) {
-        BotUtils.getFileContent(new File("data/watchers.json"), (watchers) -> {
-            this.watchers = new JSONObject(watchers);
-
-            HashMap<Integer, CrossoutItem> itemIds = new HashMap<>();
-
-            for (String key : this.watchers.keySet()) {
-
-                User user = jda.getUserById(key);
+    public TimerWatch(CrossoutMarketBot bot, JDA jda) {
+        this.bot = bot;
+        HashMap<Integer, CrossoutItem> itemIds = new HashMap<>();
+        ResultSet rs = this.bot.getDatabase().query("SELECT * FROM Watchers");
+        try {
+            while(rs.next()) {
+                Long userID = rs.getLong("discordUser");
+                User user = jda.getUserById(userID);
+                int itemID = rs.getInt("itemID");
                 if(user != null) {
-                    JSONArray array = this.watchers.getJSONArray(key);
-                    for (int i = 0; i < array.length(); i++) {
-                        final int index = i;
-                        if(!itemIds.containsKey(array.getInt(i))) {
-                            new WebAPI().getItem(array.getInt(i), item -> {
-                                itemIds.put(array.getInt(index), item);
-                                this.watchMemories.add(new WatchMemory(item, user));
-                            }, exception -> {});
-                        }else{
-                            this.watchMemories.add(new WatchMemory(itemIds.get(array.getInt(i)), user));
-                        }
+                    if(itemIds.containsKey(itemID)) {
+                        WatchMemory memory = new WatchMemory(itemIds.get(itemID), user);
+                        this.watchMemories.add(memory);
+                    }else{
+                        new WebAPI().getItem(itemID, crossoutItem -> {
+                            itemIds.put(itemID, crossoutItem);
+                            WatchMemory memory = new WatchMemory(crossoutItem, user);
+                            this.watchMemories.add(memory);
+                        }, error -> {});
                     }
-
                 }
             }
-
-        }, (exception) -> {
-            BotUtils.reportException(exception);
-            Logger.fatal("Can't continue : unable to load watchers.");
-            System.exit(-1);
-        });
-    }
-
-    private void saveWatchers() {
-        try (FileWriter file = new FileWriter("data/watchers.json")) {
-            file.write(this.watchers.toString(2));
-        } catch (Exception e) {
-            BotUtils.reportException(e);
-            Logger.error("Can't save watchers.json : " + e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        this.bot.getDatabase().close(rs);
     }
 
     @Override
@@ -126,38 +116,17 @@ public class TimerWatch extends TimerTask {
 
     public void addWatch(WatchMemory memory, Consumer<Void> onSuccess) {
         this.watchMemories.add(memory);
-
-        if (this.watchers.has(memory.getUser().getId())) {
-            this.watchers.getJSONArray(memory.getUser().getId()).put(memory.getItem().getId());
-        }else{
-            this.watchers.put(memory.getUser().getId(), new JSONArray().put(memory.getItem().getId()));
-        }
-
+        this.bot.getDatabase().execute("INSERT INTO Watchers VALUE (?, ?)", memory.getUser().getIdLong(), memory.getItem().getId());
         onSuccess.accept(null);
-
-        saveWatchers();
     }
 
     public void removeWatch(User user, CrossoutItem item, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
         WatchMemory memory = this.findWatch(user, item);
-
         if(memory == null) {
             onFailure.accept(new WatcherNotFoundException(item));
         }else{
             this.watchMemories.remove(memory);
-
-            if(this.watchers.has(memory.getUser().getId())) {
-                JSONArray array = this.watchers.getJSONArray(memory.getUser().getId());
-                int indexRemove = -1;
-                for (int i = 0; i < array.length(); i++) {
-                    if(array.getInt(i) == memory.getItem().getId()) {
-                        indexRemove = i;
-                        break;
-                    }
-                }
-                this.watchers.getJSONArray(memory.getUser().getId()).remove(indexRemove);
-            }
-            saveWatchers();
+            this.bot.getDatabase().execute("DELETE FROM Watchers WHERE discordUser = ? AND itemID = ?", memory.getUser().getIdLong(), memory.getItem().getId());
             onSuccess.accept(null);
         }
     }
