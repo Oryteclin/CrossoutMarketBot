@@ -47,6 +47,10 @@ Command.Language.Description = Change the language for your server.
 Command.Language.Switch = Language selected : English
 Command.Language.Unknown = This language is not available.
 
+Command.PauseWatch.Description = Pause/Resume your watchers.
+Command.PauseWatch.Paused = You won't receive any notifications until you execute this command again.
+Command.PauseWatch.Resumed = You will receive notifications again.
+
 Item.Currency = Coins
 Item.NoDescription = No description for this item.
 Item.Buy = Buy it for

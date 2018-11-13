@@ -3,16 +3,11 @@ package ovh.akio.cmb.utils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
-import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.throwables.WatcherNotFoundException;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,11 +56,29 @@ public class TimerWatch extends TimerTask {
             firstLoad = false;
             return;
         }
+
+        HashMap<Long, Boolean> notifier = new HashMap<>();
+
+        ResultSet rs = this.bot.getDatabase().query("SELECT discordID, watcherPaused FROM DiscordUser");
+
+        try {
+            while (rs.next()) {
+                notifier.put(rs.getLong("discordID"), rs.getBoolean("watcherPaused"));
+            }
+        } catch (SQLException e) {
+            BotUtils.reportException(e);
+        }
+
+        this.bot.getDatabase().close(rs);
+
         for (WatchMemory watchMemory : watchMemories) {
-            watchMemory.refresh((oldItem, newItem) ->
+            watchMemory.refresh((oldItem, newItem) -> {
+                        if(!notifier.get(watchMemory.getUser().getIdLong())) {
                             watchMemory.getUser().openPrivateChannel().queue(privateChannel ->
                                     privateChannel.sendMessage(getDiffEmbed(oldItem, newItem, privateChannel.getJDA()).build()).queue()
-                            )
+                            );
+                        }
+                    }
                     , (e -> {
                         BotUtils.reportException(e);
                         watchMemory.getUser().openPrivateChannel().queue(privateChannel ->

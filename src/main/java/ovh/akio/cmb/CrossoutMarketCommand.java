@@ -17,5 +17,6 @@ public class CrossoutMarketCommand extends CommandManager {
         this.registerCommand(new StatsCommand(bot));
         this.registerCommand(new HelpCommand(bot));
         this.registerCommand(new LanguageCommand(bot));
+        this.registerCommand(new PauseWatchCommand(bot));
     }
 }
