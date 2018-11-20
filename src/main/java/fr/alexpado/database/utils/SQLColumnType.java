@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 public enum SQLColumnType {
 
+    BOOLEAN(Boolean.class, boolean.class),
     TINYINT(Byte.class, byte.class),
     SMALLINT(Short.class, short.class),
     INT(Integer.class, int.class),
