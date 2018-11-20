@@ -3,7 +3,6 @@ package ovh.akio.cmb;
 import net.dv8tion.jda.core.entities.Guild;
 import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.utils.language.Translation;
-import sun.rmi.runtime.Log;
 
 import java.io.File;
 import java.sql.ResultSet;
