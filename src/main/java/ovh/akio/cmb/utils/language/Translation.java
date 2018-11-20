@@ -10,18 +10,18 @@ import java.util.HashMap;
 public class Translation {
 
     private LanguageManager manager;
-    private Language language;
+    private String language;
     private HashMap<String, String> texts = new HashMap<>();
 
-    public Translation(LanguageManager languageManager, Language language) {
+    public Translation(LanguageManager languageManager, String language) {
         this.manager = languageManager;
         this.language = language;
         this.loadTexts();
     }
 
-    public void loadTexts() {
+    private void loadTexts() {
         this.texts.clear();
-        BotUtils.getFileContent(new File(String.format("languages/%s.lang", language.name())), (langText) -> {
+        BotUtils.getFileContent(new File(String.format("languages/%s.lang", language)), (langText) -> {
             for (String line : langText.split("\n")) {
                 if(line.length()>1) {
                     String[] splitLine = line.split("=");
@@ -29,15 +29,15 @@ public class Translation {
                 }
             }
         }, e -> {
-            Logger.error(String.format("Can't load %s translation file.", language.name()));
+            Logger.error(String.format("Can't load %s translation file.", language));
             e.printStackTrace();
         });
     }
 
     public String getString(String identifier) {
         String translatedText = this.texts.getOrDefault(identifier, "");
-        if(translatedText.equals("") && this.language != Language.English) {
-            translatedText = this.manager.getTranslation(Language.English).getString(identifier);
+        if(translatedText.equals("") && !this.language.equals("English")) {
+            translatedText = this.manager.getTranslation("English").getString(identifier);
         }
         return translatedText;
     }

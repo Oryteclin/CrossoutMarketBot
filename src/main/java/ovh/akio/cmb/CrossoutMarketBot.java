@@ -95,7 +95,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
                         this.getDatabase().execute("INSERT IGNORE INTO Watchers VALUE (?, ?)", id, jsonContent.getJSONArray(userID).getInt(i));
                     }
                 }
-                watchers.delete();
+                boolean ignoreResult = watchers.delete();
             }, error -> {
                 Logger.warn("Can't start convert. Keeping file for converting later.");
                 Logger.error(error.getMessage());
@@ -109,7 +109,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
                 for (String guildID : jsonContent.keySet()) {
                     this.getDatabase().execute("UPDATE DiscordGuild SET language = ? WHERE discordID = ?", jsonContent.getString(guildID), Long.parseLong(guildID));
                 }
-                language.delete();
+                boolean ignoreResult = language.delete();
             }, error -> {
                 Logger.warn("Can't start convert. Keeping file for converting later.");
                 Logger.error(error.getMessage());
@@ -262,6 +262,11 @@ public class CrossoutMarketBot extends ListenerAdapter {
                         Logger.setShowError(false);
                         Logger.setShowFatal(true);
                         break;
+                }
+            }else if(event.getMessage().getContentRaw().endsWith("reload:")) {
+                String target = event.getMessage().getContentRaw().replace("reload:", "");
+                if(target.equals("languages")) {
+                    this.getLanguageManager().loadTranslations();
                 }
             }
         }
