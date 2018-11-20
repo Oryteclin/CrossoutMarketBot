@@ -1,0 +1,65 @@
+Command.Invite = Нажмите здесь, чтобы пригласить бота.
+Command.NotFound = Хм. Эта команда не существует :cry: :cry:
+Command.AdminOnly = Вы должны иметь право АДМИНИСТРАТОР, чтобы сделать это.
+
+Command.Changelog.Description = Показать список изменений.
+
+Command.Help.Description = Немного полезной помощи :eyes:
+Command.Help.Embed.Description = Ой ? Вам нужна помощь с командами ? Понял !
+
+Command.Item.Description = Искать предмет в базе данных предметов CrossoutDB.
+Command.Item.NoItemFound = Предмет не найден по запросу `%s`.
+Command.Item.Title = Список предметов
+Command.Item.CantProcess = Не могу обработать ваш запрос : %s.
+
+Command.Stats.Description = Получить статистику бота.
+Command.Stats.Uptime = Продолжительность работы
+Command.Stats.Watchers = Наблюдатели
+Command.Stats.Guilds = Discord серверы
+Command.Stats.CommandGlobalExecute = Выполнено команд
+Command.Stats.CommandLocalExecute = Выполнено команд здесь
+
+Command.Support.Description = Хотите получить помощь или спросить что-нибудь ?
+Command.Support.Embed.Description = Привет ! Вам нужна помощь, есть предложения или хотите сообщить об ошибке ? Вот несколько полезных ссылок.
+Command.Support.Support = Сервер поддержки бота
+Command.Support.Forum = Топик на форуме Crossout
+Command.Support.Discord = Официальный Discord-сервер игры Crossout 
+Command.Support.GitHub = GitHub бота
+
+Command.Unwatch.Description = Отменить наблюдение за предметом.
+Command.Unwatch.NoItemFound = Предмет не найден. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.Unwatch.Removed = %s удален из вашего списка наблюдения ! :ok_hand:
+Command.Unwatch.NotFound = Вы сейчас не наблюдаете за %s.
+Command.Unwatch.Error = Упс, что-то пошло не так : %s.
+Command.Unwatch.MultipleFound = Найдено несколько предметов. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.Unwatch.CantProcess = Не могу обработать ваш запрос : %s
+
+Command.Watch.Description = Наблюдать изменения цен на предмет.
+Command.Watch.NoItemFound = Предмет не найден. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.Watch.Added = %s добавили в твой список наблюдения.
+Command.Watch.MultipleFound = Найдено несколько предметов. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.Watch.CantProcess = Не могу обработать ваш запрос : %s
+
+Command.WatchList.Description = Получить твой список наблюдения.
+Command.WatchList.Title = Ваш список наблюдения
+
+Command.Language.Description = Изменить язык вашего сервера.
+Command.Language.Switch = Выбранный язык : Русский
+Command.Language.Unknown = Этот язык не доступен.
+
+Item.Currency = Монеты
+Item.NoDescription = Нет описания этого предмета.
+Item.Buy = Купить за
+Item.Sell = Продать за
+Item.CraftBuy = Купить предметы для создания детали за
+Item.CraftSell = Продать предметы для создания за
+Item.QueryTime = Время отклика CrossoutDB API : %o мс • Обновлено
+
+EmbedPage.Page = Страница %1$o/%2$o
+
+Watcher.Currency = Монеты
+Watcher.RefreshError = Извените, но что-то пошло не так во время получения информации об этом предмете %1$s.
+Watcher.Notice = Выполните команду `cm:unwatch %1$s` на сервере с ботом, чтобы прекратить наблюдение за этим предметом.
+
+Permission.MANAGE_MESSAGE = Вы не можете просматривать все прежметы, потому что вы не можете листать страницы с помощью реакций. Для работы этой функции, мне нужно право Управления Сообщениями.
+Permission.MESSAGE_EMBED_LINK = Упс. Я не могу выполнять здесь команды. Мне нужно право "Встраивать ссылки".
