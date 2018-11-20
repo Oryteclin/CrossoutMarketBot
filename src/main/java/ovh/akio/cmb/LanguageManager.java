@@ -16,8 +16,8 @@ public class LanguageManager {
 
     LanguageManager(CrossoutMarketBot bot) {
         this.bot = bot;
-        this.translations.put(Language.English, new Translation(Language.English));
-        this.translations.put(Language.French, new Translation(Language.French));
+        this.translations.put(Language.English, new Translation(this, Language.English));
+        this.translations.put(Language.French, new Translation(this, Language.French));
     }
 
     public Translation getTranslation(Language language) {

@@ -1,5 +1,6 @@
 package ovh.akio.cmb.utils.language;
 
+import ovh.akio.cmb.LanguageManager;
 import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.utils.BotUtils;
 
@@ -8,10 +9,12 @@ import java.util.HashMap;
 
 public class Translation {
 
+    private LanguageManager manager;
     private Language language;
     private HashMap<String, String> texts = new HashMap<>();
 
-    public Translation(Language language) {
+    public Translation(LanguageManager languageManager, Language language) {
+        this.manager = languageManager;
         this.language = language;
         this.loadTexts();
     }
@@ -32,7 +35,11 @@ public class Translation {
     }
 
     public String getString(String identifier) {
-        return this.texts.getOrDefault(identifier, "");
+        String translatedText = this.texts.getOrDefault(identifier, "");
+        if(translatedText.equals("") && this.language != Language.English) {
+            translatedText = this.manager.getTranslation(Language.English).getString(identifier);
+        }
+        return translatedText;
     }
 
 
