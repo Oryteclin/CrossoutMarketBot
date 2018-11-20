@@ -1,11 +1,13 @@
-package ovh.akio.cmb;
+package fr.alexpado.database;
 
 import org.json.JSONObject;
 import ovh.akio.cmb.logging.Logger;
-import ovh.akio.cmb.utils.BotUtils;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.util.function.Consumer;
 
 public class Database {
 
@@ -19,9 +21,22 @@ public class Database {
     private Connection connection;
     private JSONObject dbConfig;
 
-    Database() {
-        BotUtils.getFileContent(new File("data/database.json"), (content) -> {
-            this.dbConfig = new JSONObject(content);
+    private void getConfiguration(File file, Consumer<JSONObject> onSuccess, Consumer<Exception> onFailure) {
+        try {
+            byte[] readAllBytes = Files.readAllBytes(Paths.get( file.getAbsolutePath() ));
+            onSuccess.accept(new JSONObject(new String(readAllBytes)));
+        } catch (Exception e) {
+            onFailure.accept(e);
+        }
+    }
+
+    public Database() {
+        this("");
+    }
+
+    public Database(String pathPrefix) {
+        this.getConfiguration(new File((pathPrefix.endsWith("/") ? pathPrefix : pathPrefix + "/") + "database.json"), (content) -> {
+            this.dbConfig = content;
             this.createConnection();
         }, (error) -> {
             Logger.fatal("Can't read database config file. Exiting...");
@@ -31,17 +46,20 @@ public class Database {
 
     private void createConnection() {
         try {
-
             String host = this.dbConfig.getString("host");
             String user = this.dbConfig.getString("user");
             String pass = this.dbConfig.getString("pass");
             String name = this.dbConfig.getString("name");
-            int port = this.dbConfig.getInt("port");
+            int port = 3306;
+            if(this.dbConfig.has("port")) {
+                port = this.dbConfig.getInt("port");
+            }
+
 
             Logger.info("Connecting to database...");
             this.connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + name + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", user, pass);
             Logger.info("Connected.");
-        } catch (SQLException e){
+        } catch (Exception e){
             Logger.error(e.getMessage());
             Logger.fatal("Can't connect to database. Exiting...");
             System.exit(-1);
@@ -67,11 +85,14 @@ public class Database {
         }else if(checkType(parameter, String.class)) {
             statement.setString(i, ((String) parameter));
             return true;
+        }else if(checkType(parameter, Object.class)) {
+            statement.setObject(i, parameter);
         }
         return false;
     }
 
     public boolean execute(String sql, Object... parameters) {
+        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
@@ -91,6 +112,7 @@ public class Database {
     }
 
     public int executeAndAutoIncrement(String sql, Object... parameters) {
+        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
@@ -120,6 +142,7 @@ public class Database {
     private PreparedStatement statement;
 
     public ResultSet query(String sql, Object... parameters) {
+        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
