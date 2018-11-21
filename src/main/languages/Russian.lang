@@ -1,7 +1,7 @@
 Command.Invite = Нажмите здесь, чтобы пригласить бота.
 Command.NotFound = Хм. Эта команда не существует :cry: :cry:
 Command.AdminOnly = Вы должны иметь право АДМИНИСТРАТОР, чтобы сделать это.
-Command.Error = Something went wrong and the dev(s) has been notified.
+Command.Error = Что-то пошло не так, и разработчик(и) был(и) оповещен(ы).
 
 Command.Changelog.Description = Показать список изменений.
 Command.Changelog.Full = View full changelog
