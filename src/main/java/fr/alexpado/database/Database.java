@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class Database {
@@ -85,14 +86,17 @@ public class Database {
         }else if(checkType(parameter, String.class)) {
             statement.setString(i, ((String) parameter));
             return true;
+        }else if(checkType(parameter, double.class, Double.class)) {
+            statement.setDouble(i, ((double) parameter));
+            return true;
         }else if(checkType(parameter, Object.class)) {
             statement.setObject(i, parameter);
+            return true;
         }
         return false;
     }
 
     public boolean execute(String sql, Object... parameters) {
-        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
@@ -107,12 +111,13 @@ public class Database {
             return b;
         } catch (SQLException e){
             Logger.error(e.getMessage());
+            Logger.warn(sql);
+            Logger.warn(Arrays.toString(parameters));
         }
         return false;
     }
 
     public int executeAndAutoIncrement(String sql, Object... parameters) {
-        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
@@ -135,6 +140,8 @@ public class Database {
             return id;
         } catch (SQLException e){
             Logger.error(e.getMessage());
+            Logger.warn(sql);
+            Logger.warn(Arrays.toString(parameters));
         }
         return -1;
     }
@@ -142,7 +149,6 @@ public class Database {
     private PreparedStatement statement;
 
     public ResultSet query(String sql, Object... parameters) {
-        Logger.debug(sql);
         int i = 1;
         try {
             this.reloadConnection();
@@ -155,6 +161,8 @@ public class Database {
             return statement.executeQuery();
         } catch (SQLException e){
             Logger.error(e.getMessage());
+            Logger.warn(sql);
+            Logger.warn(Arrays.toString(parameters));
         }
         return null;
     }

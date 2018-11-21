@@ -1,5 +1,6 @@
 package fr.alexpado.database.query;
 
+import fr.alexpado.database.annotations.Column;
 import fr.alexpado.database.annotations.Table;
 import fr.alexpado.database.utils.DataField;
 
@@ -28,7 +29,10 @@ public class QueryBuilder {
 
 
         for (Field declaredField : this.data.getClass().getDeclaredFields()) {
-            this.values.add(new DataField(declaredField));
+            if (declaredField.isAnnotationPresent(Column.class)) {
+                this.values.add(new DataField(declaredField));
+            }
+
         }
     }
 

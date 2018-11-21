@@ -7,6 +7,10 @@ public class ListenableArrayList<T> extends ArrayList<T> {
 
     private ArrayListListener<T> listener;
 
+    public ListenableArrayList() {
+        super();
+    }
+
     public ListenableArrayList(ArrayList<T> list) {
         this.addAll(list);
     }
