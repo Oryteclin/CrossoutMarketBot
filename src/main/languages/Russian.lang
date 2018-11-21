@@ -64,8 +64,8 @@ Command.AdvancedWatch.Description = Установите настройки на
 Command.AdvancedWatch.NumberFormat = Пожалуйста, введите число.
 Command.AdvancedWatch.NoItemFound = Предмет не найден. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
 Command.AdvancedWatch.NotFound = Вы сейчас не наблюдаете за %s.
-Command.AdvancedWatch.Sell = Вас уведомят, когда цена предмета %s станет больше %s монет.
-Command.AdvancedWatch.Buy = Вас уведомят, когда цена предмета %s станет меньше %s монет.
+Command.AdvancedWatch.Sell = Вас уведомят, когда цена продажи предмета %s станет больше %s монет.
+Command.AdvancedWatch.Buy = Вас уведомят, когда цена покупки предмета %s станет меньше %s монет.
 Command.AdvancedWatch.MultipleFound = Найдено несколько предметов. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
 Command.AdvancedWatch.CantProcess = Не могу обработать ваш запрос : %s
 
