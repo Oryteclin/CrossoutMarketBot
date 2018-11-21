@@ -51,6 +51,13 @@ Command.PauseWatch.Description = Suspend/Reprend vos watchers.
 Command.PauseWatch.Paused = Vous ne recevrez plus de notifications tant que vous ne ré-éxecuterez pas cette commande.
 Command.PauseWatch.Resumed = Vous recevrez à nouveau les notifications.
 
+Command.WatcherInterval.Description = Choisissez l'intervalle de rafraîchissement d'un watcher.
+Command.WatcherInterval.NoItemFound = Aucun item trouvé. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.WatcherInterval.NotFound = Vous n'avez aucun watcher pour l'item %s..
+Command.WatcherInterval.Edited = L'intervalle pour l'item %s est désormais de %ss.
+Command.WatcherInterval.MultipleFound = Plusieurs items trouvés. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
+Command.WatcherInterval.CantProcess = Impossible d'honnorer la requête : %s.
+
 Item.Currency = Coins
 Item.NoDescription = Pas de description pour cet item.
 Item.Buy = Achetez pour
