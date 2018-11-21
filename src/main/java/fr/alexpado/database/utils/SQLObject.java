@@ -4,6 +4,7 @@ import fr.alexpado.database.Database;
 import fr.alexpado.database.query.QueryBuilder;
 
 import java.sql.ResultSet;
+import java.util.function.Consumer;
 
 public class SQLObject {
 
@@ -33,7 +34,7 @@ public class SQLObject {
         this.queryBuilder.getDeleteQuery((sql, objects) -> database.execute(sql, objects.toArray()));
     }
 
-    public void select() {
+    public void select(Consumer<Void> onSelectRecordError) {
 
         this.queryBuilder.getSelectQuery((sql, objects) -> {
             ResultSet rs = database.query(sql, objects.toArray());
@@ -43,7 +44,7 @@ public class SQLObject {
                         dataField.setValue(this.object, rs.getObject(dataField.getName()));
                     }
                 }else{
-                    throw new Exception("Record doesn't exists.");
+                    if(onSelectRecordError != null) onSelectRecordError.accept(null);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
