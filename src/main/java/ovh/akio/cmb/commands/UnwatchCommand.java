@@ -1,10 +1,13 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
+import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.throwables.WatcherNotFoundException;
 import ovh.akio.cmb.utils.BotUtils;
@@ -12,6 +15,7 @@ import ovh.akio.cmb.utils.WebAPI;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class UnwatchCommand extends Command {
 
@@ -31,7 +35,9 @@ public class UnwatchCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("uw");
+        return aliases;
     }
 
     @Override
@@ -59,60 +65,35 @@ public class UnwatchCommand extends Command {
                                         .build()
                         ).queue();
                     }else if(result.size() == 1) {
-                        this.getBot().getTimerWatch().removeWatch(event.getAuthor(), result.get(0), aVoid ->
-                                        message.editMessage(
-                                                new EmbedBuilder()
-                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Removed"), result.get(0).getName()))
-                                                        .setColor(Color.GREEN)
-                                                        .build()
-                                        ).queue()
-                                , e -> {
-                                    if(e instanceof WatcherNotFoundException) {
-                                        message.editMessage(
-                                                new EmbedBuilder()
-                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.NotFound"), ((WatcherNotFoundException) e).getItem().getName()))
-                                                        .setColor(Color.RED)
-                                                        .build()
-                                        ).queue();
-                                    }else{
-                                        BotUtils.reportException(e);
-                                        message.editMessage(
-                                                new EmbedBuilder()
-                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
-                                                        .setColor(Color.RED)
-                                                        .build()
-                                        ).queue();
-                                    }
-                                });
+                        try {
+                            this.deleteWatcher(message, event, result.get(0));
+                        } catch (WatcherNotFoundException e) {
+                            message.editMessage(
+                                    new EmbedBuilder()
+                                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                            .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.NotFound"), result.get(0).getName()))
+                                            .setColor(Color.RED)
+                                            .build()
+                            ).queue();
+                        }
                     }else{
 
                         for (CrossoutItem item : result) {
                             if(item.getName().equalsIgnoreCase(query)) {
-                                this.getBot().getTimerWatch().removeWatch(event.getAuthor(), item, aVoid ->
-                                                message.editMessage(
-                                                        new EmbedBuilder()
-                                                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                                .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Removed"), item.getName()))
-                                                                .setColor(Color.GREEN)
-                                                                .build()
-                                                ).queue()
-                                        , e -> {
-                                            BotUtils.reportException(e);
-                                            message.editMessage(
-                                                    new EmbedBuilder()
-                                                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                            .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Error"), e.getMessage()))
-                                                            .setColor(Color.RED)
-                                                            .build()
-                                            ).queue();
-                                        });
+                                try {
+                                    this.deleteWatcher(message, event, item);
+                                } catch (WatcherNotFoundException e) {
+                                    message.editMessage(
+                                            new EmbedBuilder()
+                                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                                    .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.NotFound"), item.getName()))
+                                                    .setColor(Color.RED)
+                                                    .build()
+                                    ).queue();
+                                }
                                 return;
                             }
                         }
-
 
                         message.editMessage(
                                 new EmbedBuilder()
@@ -133,6 +114,17 @@ public class UnwatchCommand extends Command {
                     ).queue();
                 })
         );
+    }
+
+    private void deleteWatcher(Message message, GuildMessageReceivedEvent event, CrossoutItem item) throws WatcherNotFoundException {
+        this.getBot().getWatcherManager().removeWatcher(event.getAuthor().getIdLong(), item.getId());
+        message.editMessage(
+                new EmbedBuilder()
+                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                        .setDescription(String.format(this.getTranslation(event, "Command.Unwatch.Removed"), item.getName()))
+                        .setColor(Color.GREEN)
+                        .build()
+        ).queue();
     }
 
 }

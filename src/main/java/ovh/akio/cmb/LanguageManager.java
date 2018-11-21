@@ -1,59 +1,75 @@
 package ovh.akio.cmb;
 
 import net.dv8tion.jda.core.entities.Guild;
-import org.json.JSONObject;
+import ovh.akio.cmb.data.discord.DiscordGuild;
 import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.utils.BotUtils;
-import ovh.akio.cmb.utils.language.Language;
 import ovh.akio.cmb.utils.language.Translation;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public class LanguageManager {
 
-    private JSONObject languageSettings;
-    private HashMap<Language, Translation> translations = new HashMap<>();
+    private CrossoutMarketBot bot;
+    private HashMap<String, Translation> translations = new HashMap<>();
 
-    public LanguageManager() {
-
-        BotUtils.getFileContent(new File("data/languages.json"), setting ->
-                        this.languageSettings = new JSONObject(setting)
-                , e -> {
-                    BotUtils.reportException(e);
-                    Logger.warn("Can't load language settings file.");
-                });
-
-
-        this.translations.put(Language.English, new Translation(Language.English));
-        this.translations.put(Language.French, new Translation(Language.French));
+    LanguageManager(CrossoutMarketBot bot) {
+        this.bot = bot;
+        this.loadTranslations();
     }
 
-    public Translation getTranslation(Language language) {
-        return this.translations.get(language);
-    }
-
-    public void setTranslationForGuild(Guild guild, Language language) {
-        this.languageSettings.put(guild.getId(), language.name());
-        saveSettings();
-    }
-
-    public Translation getTranslationForGuild(Guild guild) {
-        if(this.languageSettings.has(guild.getId())) {
-            return this.translations.get(Language.valueOf(this.languageSettings.getString(guild.getId())));
-        }else{
-            this.setTranslationForGuild(guild, Language.English);
-            return this.translations.get(Language.English);
+    void loadTranslations() {
+        this.translations.clear();
+        File languageFolder = new File("languages");
+        File[] languages = languageFolder.listFiles();
+        if(!languageFolder.exists() || languages == null) {
+            Logger.error("Can't load any languages. The bot can't send message without English translation file.");
+            System.exit(-1);
+        }
+        for (File language : languages) {
+            String languageName = language.getName().replace(".lang", "");
+            this.translations.put(languageName, new Translation(this, languageName));
         }
     }
 
-    private void saveSettings() {
-        try (FileWriter file = new FileWriter("data/languages.json")) {
-            file.write(this.languageSettings.toString(2));
+    public Translation getTranslation(String language) {
+        Translation translation = this.translations.get(language);
+        if(translation == null) {
+            File langFile = new File(String.format("languages/%s.lang", language));
+            if(langFile.exists()) {
+                // Load language at runtime. Allow to load new language without updating the bot.
+                this.translations.put(language, new Translation(this, language));
+            }
+        }
+        return this.translations.get(language);
+    }
+
+    public boolean translationExists(String language) {
+        return this.translations.keySet().contains(language);
+    }
+
+    public void setTranslationForGuild(Guild guild, String language) {
+        try {
+            DiscordGuild discordGuild = new DiscordGuild(this.bot.getDatabase(), guild.getIdLong());
+            discordGuild.getSqlObject().select();
+            discordGuild.setLanguage(language);
+            discordGuild.getSqlObject().update();
         } catch (Exception e) {
             BotUtils.reportException(e);
-            Logger.error("Can't save languages.json : " + e.getMessage());
+        }
+    }
+
+    public Translation getTranslationForGuild(Guild guild) {
+        try {
+            DiscordGuild discordGuild = new DiscordGuild(this.bot.getDatabase(), guild.getIdLong());
+            discordGuild.getSqlObject().select();
+            return this.getTranslation(discordGuild.getLanguage());
+        } catch (Exception e) {
+            Logger.warn("Unable to load guild language setting. Using English by default.");
+            return this.getTranslation("English");
         }
     }
 

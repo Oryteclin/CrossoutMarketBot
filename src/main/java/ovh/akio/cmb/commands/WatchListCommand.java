@@ -4,13 +4,14 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.WatchMemory;
+import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.impl.embed.EmbedItem;
 import ovh.akio.cmb.impl.embed.EmbedPage;
-import ovh.akio.cmb.utils.TimerWatch;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WatchListCommand extends Command {
 
@@ -30,7 +31,9 @@ public class WatchListCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("wl");
+        return aliases;
     }
 
     @Override
@@ -42,11 +45,13 @@ public class WatchListCommand extends Command {
     public void execute(GuildMessageReceivedEvent event) {
 
         event.getChannel().sendMessage(new EmbedBuilder().setDescription("Running in the 90's...").build()).queue(message -> {
-            TimerWatch timerWatch = this.getBot().getTimerWatch();
+
+            Collection<Watcher> watchers = this.getBot().getWatcherManager().getUserWatchers(event.getAuthor());
+
             ArrayList<EmbedItem> items = new ArrayList<>();
 
-            for (WatchMemory watchMemory : timerWatch.getWatchMemories(event.getAuthor())) {
-                items.add(watchMemory.getItem());
+            for (Watcher watcher : watchers) {
+                items.add(watcher.getItem());
             }
 
             if(items.size() == 0) {

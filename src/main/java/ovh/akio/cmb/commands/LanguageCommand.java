@@ -4,7 +4,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.impl.command.Command;
-import ovh.akio.cmb.utils.language.Language;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,9 @@ public class LanguageCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("l");
+        return aliases;
     }
 
     @Override
@@ -45,14 +46,11 @@ public class LanguageCommand extends Command {
         String label = event.getMessage().getContentRaw().split(" ")[0];
         String lang = event.getMessage().getContentRaw().replace(label, "").trim();
 
-        try {
-            Language language = Language.valueOf(lang);
-            this.getBot().getLanguageManager().setTranslationForGuild(event.getGuild(), language);
+        if(this.getBot().getLanguageManager().translationExists(lang)) {
+            this.getBot().getLanguageManager().setTranslationForGuild(event.getGuild(), lang);
             event.getChannel().sendMessage(this.getTranslation(event, "Command.Language.Switch")).queue();
-        } catch (IllegalArgumentException e) {
+        }else{
             event.getChannel().sendMessage(this.getTranslation(event, "Command.Language.Unknown")).queue();
-            e.printStackTrace();
         }
-
     }
 }

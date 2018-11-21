@@ -5,3 +5,5 @@
 build/
 build/**
 src/main/data/configuration.json
+src/main/data/languages.json
+src/main/data/watcher.json

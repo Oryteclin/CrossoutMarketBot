@@ -1,20 +1,23 @@
 package ovh.akio.cmb;
 
+import fr.alexpado.database.Database;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONObject;
+import ovh.akio.cmb.data.discord.DiscordGuild;
+import ovh.akio.cmb.data.discord.DiscordUser;
+import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.utils.BotUtils;
+import ovh.akio.cmb.utils.DatabaseUpdater;
 import ovh.akio.cmb.utils.Duration;
-import ovh.akio.cmb.utils.TimerWatch;
+import ovh.akio.cmb.watcher.WatcherManager;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
@@ -25,10 +28,10 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     private CrossoutMarketCommand commandManager;
     private boolean beta;
-    private TimerWatch timerWatch;
-    private Timer timer = new Timer();
+    private WatcherManager watcherManager;
     private Long startTime = System.currentTimeMillis();
     private LanguageManager languageManager;
+    private Database database;
 
     public CrossoutMarketBot(boolean beta) {
         this.beta = beta;
@@ -40,6 +43,8 @@ public class CrossoutMarketBot extends ListenerAdapter {
     }
 
     private void startBot(JSONObject object) {
+
+        this.database = new Database("data/");
 
         JDABuilder builder = new JDABuilder(AccountType.BOT);
 
@@ -68,12 +73,62 @@ public class CrossoutMarketBot extends ListenerAdapter {
         return commandManager;
     }
 
-    public TimerWatch getTimerWatch() {
-        return timerWatch;
-    }
-
     public String getUptime() {
         return new Duration(System.currentTimeMillis() - startTime).toString();
+    }
+
+    private void convertConfigurationFiles() {
+
+        File watchers = new File("data/watchers.json");
+        File language = new File("data/languages.json");
+
+        if(watchers.exists()) {
+            Logger.info("watchers.json found : Converting into MySQL Data...");
+            BotUtils.getFileContent(watchers, content -> {
+                JSONObject jsonContent = new JSONObject(content);
+                for (String userID : jsonContent.keySet()) {
+                    Long id = Long.parseLong(userID);
+                    for (int i = 0; i < jsonContent.getJSONArray(userID).length(); i++) {
+                        try {
+                            Watcher watcher = new Watcher(this.database, id, jsonContent.getJSONArray(userID).getInt(i));
+                            watcher.getSqlObject().insert();
+                        } catch (Exception e) {
+                            Logger.warn(e.getMessage());
+                        }
+                    }
+                }
+                boolean ignoreResult = watchers.delete();
+            }, error -> {
+                Logger.warn("Can't start convert. Keeping file for converting later.");
+                Logger.error(error.getMessage());
+            });
+        }
+
+        if(language.exists()) {
+            Logger.info("languages.json found : Converting into MySQL Data...");
+            BotUtils.getFileContent(language, content -> {
+                JSONObject jsonContent = new JSONObject(content);
+                for (String guildID : jsonContent.keySet()) {
+                    try {
+                        DiscordGuild guild = new DiscordGuild(this.database, Long.parseLong(guildID));
+                        guild.getSqlObject().select();
+                        guild.setLanguage(jsonContent.getString(guildID));
+                        guild.getSqlObject().update();
+                    } catch (Exception e) {
+                        Logger.warn(e.getMessage());
+                    }
+                }
+                boolean ignoreResult = language.delete();
+            }, error -> {
+                Logger.warn("Can't start convert. Keeping file for converting later.");
+                Logger.error(error.getMessage());
+            });
+        }
+
+    }
+
+    public WatcherManager getWatcherManager() {
+        return watcherManager;
     }
 
     @Override
@@ -81,14 +136,35 @@ public class CrossoutMarketBot extends ListenerAdapter {
         Guild myGuild = event.getJDA().getGuildById(508012982287073280L);
         TextChannel logs = myGuild.getTextChannelById(508020752994271242L);
         BotUtils.setReportChannel(logs);
-        Logger.info("Loading Watch Service...");
-        this.timerWatch = new TimerWatch(event.getJDA());
-        this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
         Logger.info("Loading languages...");
-        languageManager = new LanguageManager();
+        languageManager = new LanguageManager(this);
+        Logger.info("Registering listeners...");
+        event.getJDA().addEventListener(new DatabaseUpdater(this));
+        Logger.info("Updating database...");
+
+        try {
+            new DiscordGuild(this.database).getSqlObject().createTable();
+            new DiscordUser(this.database).getSqlObject().createTable();
+            new Watcher(this.database).getSqlObject().createTable();
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        event.getJDA().getGuilds().forEach(guild ->
+                this.getDatabase().execute("INSERT INTO Guilds (discordID, name, icon, joinedDate, owner, language) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), owner = VALUES(owner)",
+                        guild.getIdLong(), guild.getName(), guild.getIconUrl() == null ? "" : guild.getIconUrl(),
+                        guild.getSelfMember().getJoinDate().toEpochSecond(), guild.getOwner().getUser().getIdLong(), "English")
+        );
+        this.convertConfigurationFiles();
+        Logger.info("Loading Watch Service...");
+        this.watcherManager = new WatcherManager(event.getJDA(), this.database);
         Logger.info("Bot ready !");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);
+
+
     }
 
     public static boolean checkPermission(Guild guild, TextChannel channel, Permission permission) {
@@ -146,6 +222,12 @@ public class CrossoutMarketBot extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if(!event.getAuthor().isBot() && event.getMessage().getContentRaw().startsWith(this.commandManager.getPrefix())) {
+
+            User user = event.getAuthor();
+
+            this.getDatabase().execute("INSERT INTO Users (discordID, name, avatar, watcherPaused) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), avatar = VALUES(avatar)",
+                    user.getIdLong(), user.getName(), user.getAvatarUrl() == null ? "" : user.getAvatarUrl(), false);
+
             if(event.getGuild() != null) {
                 if (!CrossoutMarketBot.checkPermission(event.getGuild(), event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
                     event.getChannel().sendMessage(this.getLanguageManager().getTranslationForGuild(event.getGuild()).getString("Permission.MESSAGE_EMBED_LINK")).queue();
@@ -161,19 +243,6 @@ public class CrossoutMarketBot extends ListenerAdapter {
                     break;
             }
         }
-    }
-
-
-    @Override
-    public void onGuildJoin(GuildJoinEvent event) {
-        BotUtils.sendToLog("Hey ! I've joined the server `" + event.getGuild().getName() + "`");
-        event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
-    }
-
-    @Override
-    public void onGuildLeave(GuildLeaveEvent event) {
-        BotUtils.sendToLog("Hey ! I've left the server `" + event.getGuild().getName() + "`");
-        event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
     }
 
     @Override
@@ -218,11 +287,20 @@ public class CrossoutMarketBot extends ListenerAdapter {
                         Logger.setShowFatal(true);
                         break;
                 }
+            }else if(event.getMessage().getContentRaw().endsWith("reload:")) {
+                String target = event.getMessage().getContentRaw().replace("reload:", "");
+                if(target.equals("languages")) {
+                    this.getLanguageManager().loadTranslations();
+                }
             }
         }
     }
 
     public LanguageManager getLanguageManager() {
         return languageManager;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 }

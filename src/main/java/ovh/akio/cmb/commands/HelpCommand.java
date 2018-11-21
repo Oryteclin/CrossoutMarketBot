@@ -26,7 +26,10 @@ public class HelpCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("h");
+        aliases.add("?");
+        return aliases;
     }
 
     @Override

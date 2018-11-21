@@ -1,3 +1,11 @@
+[1.7.0]
+• Configuration & Watchers not saved in file anymore. (MySQL)
+• Better uptime presentation (added day + hiding 0 values)
+• Added Watcher Interval & Advanced Watcher (see cm:help)
+• Added aliases for common commands
+• Better watcher backend
+
+
 [1.6.2]
 • Fixed \n not being new line
 • Added forgotten translations on Item's embed

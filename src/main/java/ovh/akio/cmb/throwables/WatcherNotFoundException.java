@@ -1,4 +1,5 @@
 package ovh.akio.cmb.throwables;
 
-public class WatcherNotFoundException extends Exception {
-}
+import ovh.akio.cmb.data.CrossoutItem;
+
+public class WatcherNotFoundException extends Exception {}
