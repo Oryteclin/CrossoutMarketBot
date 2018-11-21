@@ -32,7 +32,9 @@ public class WatcherIntervalCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("wi");
+        return aliases;
     }
 
     @Override

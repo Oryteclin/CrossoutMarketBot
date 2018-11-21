@@ -29,7 +29,9 @@ public class PauseWatchCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("pw");
+        return aliases;
     }
 
     @Override

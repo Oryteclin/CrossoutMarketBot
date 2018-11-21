@@ -31,7 +31,9 @@ public class WatchListCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("wl");
+        return aliases;
     }
 
     @Override

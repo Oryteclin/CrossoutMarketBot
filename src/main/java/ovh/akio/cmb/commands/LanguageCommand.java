@@ -25,7 +25,9 @@ public class LanguageCommand extends Command {
 
     @Override
     public ArrayList<String> getAliases() {
-        return new ArrayList<>();
+        ArrayList<String> aliases =  new ArrayList<>();
+        aliases.add("l");
+        return aliases;
     }
 
     @Override
