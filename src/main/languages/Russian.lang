@@ -47,6 +47,28 @@ Command.Language.Description = Изменить язык вашего серве
 Command.Language.Switch = Выбранный язык : Русский
 Command.Language.Unknown = Этот язык не доступен.
 
+
+Command.PauseWatch.Description = Приостановить/Возобновить ваше наблюдение.
+Command.PauseWatch.Paused = Вы не будете получать никакие уведомления до тех пор, пока вы не выполните эту команду еще раз.
+Command.PauseWatch.Resumed = Вы начнете получать уведомления снова.
+
+Command.WatcherInterval.Description = Выберите интервал обновления для предмета.
+Command.WatcherInterval.NumberFormat = Пожалуйста, введите число.
+Command.WatcherInterval.NoItemFound = Предмет не найден. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.WatcherInterval.NotFound = Вы сейчас не наблюдаете за %s.
+Command.WatcherInterval.Edited = Интервал для предмета %s установили на %sс.
+Command.WatcherInterval.MultipleFound = Найдено несколько предметов. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.WatcherInterval.CantProcess = Не могу обработать ваш запрос : %s
+
+Command.AdvancedWatch.Description = Установите настройки наблюдения для слежения за конкретными изменениями цены.
+Command.AdvancedWatch.NumberFormat = Пожалуйста, введите число.
+Command.AdvancedWatch.NoItemFound = Предмет не найден. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.AdvancedWatch.NotFound = Вы сейчас не наблюдаете за %s.
+Command.AdvancedWatch.Sell = Вас уведомят, когда цена предмета %s станет больше %s монет.
+Command.AdvancedWatch.Buy = Вас уведомят, когда цена предмета %s станет меньше %s монет.
+Command.AdvancedWatch.MultipleFound = Найдено несколько предметов. Пожалуйста, проверьте имя предмета командой `cm:item <item name>`.
+Command.AdvancedWatch.CantProcess = Не могу обработать ваш запрос : %s
+
 Item.Currency = Монеты
 Item.NoDescription = Нет описания этого предмета.
 Item.Buy = Купить за
