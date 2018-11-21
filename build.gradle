@@ -9,7 +9,7 @@ tasks.withType(JavaCompile) {
 }
 
 group 'ovh.akio.cmb'
-version '1.6.2-RELEASE'
+version '1.7.0-RELEASE'
 
 sourceCompatibility = 1.8
 
