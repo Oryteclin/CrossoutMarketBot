@@ -43,7 +43,7 @@ public class ChangelogCommand extends Command {
         BotUtils.getFileContent(new File("data/versionchangelog.txt"), (changelog) -> {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl());
-            builder.setTitle(this.getTranslation(event, "Command.Changlog.Full"), "https://github.com/alexpado/CrossoutMarketBot/blob/master/src/main/data/changelog.txt");
+            builder.setTitle(this.getTranslation(event, "Command.Changelog.Full"), "https://github.com/alexpado/CrossoutMarketBot/blob/master/src/main/data/changelog.txt");
             builder.setDescription(String.format("```%s```", changelog));
             builder.setColor(Color.white);
             event.getChannel().sendMessage(builder.build()).queue();
