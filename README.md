@@ -14,15 +14,25 @@ Here's an example :
 }
 ```
 
-#### watchers.json file
-You don't need to edit this one. This file contains all items watchers for each user.
+#### database.json file
+This file contains all settings for the bot to be able to connect to a database.
 
  ```json
- {
-    "user_discord_id": [0, 1, 2]
- }
+{
+   "host": "localhost",
+   "user": "mysqlUser",
+   "pass": "mysqlPassword",
+   "name": "mysqlDatabaseName",
+   "port": 3306
+}
  ```
-Numbers are item IDs.
+
+#### Translate the bot
+You can translate the bot in your language by making a pull request using one of the translation file and submitting your in the [languages folder](https://github.com/alexpado/CrossoutMarketBot/tree/master/src/main/languages).
+Join the Discord server to receive your "Translator" role and get notified when translations need update.
+
+#### Features Request & Bugs Report
+You can request feature and report bugs on the Discord or by opening an issue.
 
 
 #### Links
