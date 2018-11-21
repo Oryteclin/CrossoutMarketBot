@@ -52,7 +52,7 @@ public class Watcher {
     private Long watchInterval = 1800000L;
 
     @Column(name = "lastInterval", columnType = SQLColumnType.BIGINT)
-    private Long lastInterval = 0L;
+    private Long lastInterval = System.currentTimeMillis() - 10;
 
     @Column(name = "priceLimit", columnType = SQLColumnType.DOUBLE)
     private Double priceLimit = 0.0;

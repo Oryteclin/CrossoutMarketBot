@@ -89,7 +89,12 @@ public class CrossoutMarketBot extends ListenerAdapter {
                 for (String userID : jsonContent.keySet()) {
                     Long id = Long.parseLong(userID);
                     for (int i = 0; i < jsonContent.getJSONArray(userID).length(); i++) {
-                        this.getDatabase().execute("INSERT IGNORE INTO Watchers VALUE (?, ?)", id, jsonContent.getJSONArray(userID).getInt(i));
+                        try {
+                            Watcher watcher = new Watcher(this.database, id, jsonContent.getJSONArray(userID).getInt(i));
+                            watcher.getSqlObject().insert();
+                        } catch (Exception e) {
+                            Logger.warn(e.getMessage());
+                        }
                     }
                 }
                 boolean ignoreResult = watchers.delete();
@@ -104,7 +109,14 @@ public class CrossoutMarketBot extends ListenerAdapter {
             BotUtils.getFileContent(language, content -> {
                 JSONObject jsonContent = new JSONObject(content);
                 for (String guildID : jsonContent.keySet()) {
-                    this.getDatabase().execute("UPDATE DiscordGuild SET language = ? WHERE discordID = ?", jsonContent.getString(guildID), Long.parseLong(guildID));
+                    try {
+                        DiscordGuild guild = new DiscordGuild(this.database, Long.parseLong(guildID));
+                        guild.getSqlObject().select();
+                        guild.setLanguage(jsonContent.getString(guildID));
+                        guild.getSqlObject().update();
+                    } catch (Exception e) {
+                        Logger.warn(e.getMessage());
+                    }
                 }
                 boolean ignoreResult = language.delete();
             }, error -> {
@@ -140,10 +152,6 @@ public class CrossoutMarketBot extends ListenerAdapter {
             System.exit(-1);
         }
 
-        event.getJDA().getUsers().forEach(user ->
-                this.getDatabase().execute("INSERT INTO Users (discordID, name, avatar, watcherPaused) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), avatar = VALUES(avatar)",
-                        user.getIdLong(), user.getName(), user.getAvatarUrl() == null ? "" : user.getAvatarUrl(), false)
-        );
         event.getJDA().getGuilds().forEach(guild ->
                 this.getDatabase().execute("INSERT INTO Guilds (discordID, name, icon, joinedDate, owner, language) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), owner = VALUES(owner)",
                         guild.getIdLong(), guild.getName(), guild.getIconUrl() == null ? "" : guild.getIconUrl(),
@@ -214,6 +222,12 @@ public class CrossoutMarketBot extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if(!event.getAuthor().isBot() && event.getMessage().getContentRaw().startsWith(this.commandManager.getPrefix())) {
+
+            User user = event.getAuthor();
+
+            this.getDatabase().execute("INSERT INTO Users (discordID, name, avatar, watcherPaused) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), avatar = VALUES(avatar)",
+                    user.getIdLong(), user.getName(), user.getAvatarUrl() == null ? "" : user.getAvatarUrl(), false);
+
             if(event.getGuild() != null) {
                 if (!CrossoutMarketBot.checkPermission(event.getGuild(), event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
                     event.getChannel().sendMessage(this.getLanguageManager().getTranslationForGuild(event.getGuild()).getString("Permission.MESSAGE_EMBED_LINK")).queue();
