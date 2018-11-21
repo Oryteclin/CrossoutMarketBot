@@ -106,7 +106,7 @@ public class QueryBuilder {
     }
 
     public void getInsertQuery(BiConsumer<String, ArrayList<Object>> onSuccess) {
-        String query = "INSERT INTO %s (%s) VALUE (%s)";
+        String query = "INSERT IGNORE INTO %s (%s) VALUE (%s)";
         ArrayList<Object> data = new ArrayList<>();
 
         StringBuilder columns = new StringBuilder();
