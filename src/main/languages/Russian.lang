@@ -1,8 +1,10 @@
 Command.Invite = Нажмите здесь, чтобы пригласить бота.
 Command.NotFound = Хм. Эта команда не существует :cry: :cry:
 Command.AdminOnly = Вы должны иметь право АДМИНИСТРАТОР, чтобы сделать это.
+Command.Error = Something went wrong and the dev(s) has been notified.
 
 Command.Changelog.Description = Показать список изменений.
+Command.Changelog.Full = View full changelog
 
 Command.Help.Description = Немного полезной помощи :eyes:
 Command.Help.Embed.Description = Ой ? Вам нужна помощь с командами ? Понял !
