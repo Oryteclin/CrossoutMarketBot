@@ -70,7 +70,7 @@ public class LanguageManager {
     public void setTranslationForGuild(Guild guild, String language) {
         try {
             DiscordGuild discordGuild = new DiscordGuild(this.bot.getDatabase(), guild.getIdLong());
-            discordGuild.getSqlObject().select();
+            discordGuild.getSqlObject().select(null);
             discordGuild.setLanguage(language);
             discordGuild.getSqlObject().update();
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class LanguageManager {
     public Translation getTranslationForGuild(Guild guild) {
         try {
             DiscordGuild discordGuild = new DiscordGuild(this.bot.getDatabase(), guild.getIdLong());
-            discordGuild.getSqlObject().select();
+            discordGuild.getSqlObject().select(null);
             return this.getTranslation(discordGuild.getLanguage());
         } catch (Exception e) {
             Logger.warn("Unable to load guild language setting. Using English by default.");

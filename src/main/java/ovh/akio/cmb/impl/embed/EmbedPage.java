@@ -74,7 +74,7 @@ public abstract class EmbedPage extends ListenerAdapter {
         }
 
         if(items.size() > 10) {
-            if(CrossoutMarketBot.checkPermission(message.getGuild(), message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
+            if(BotUtils.checkPermission(message.getGuild(), message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
                 this.message.addReaction("◀").queue(aVoid ->
                         this.message.addReaction("▶").queue(aVoid1 ->
                                 this.message.addReaction("❌").queue(aVoid2 -> {

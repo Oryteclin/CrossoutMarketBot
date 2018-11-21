@@ -45,7 +45,7 @@ public class PauseWatchCommand extends Command {
 
         try {
             DiscordUser user = new DiscordUser(this.getBot().getDatabase(), event.getAuthor().getIdLong());
-            user.getSqlObject().select();
+            user.getSqlObject().select(null);
 
             if(!user.isWatcherPaused()) {
                 event.getChannel().sendMessage(new EmbedBuilder()
