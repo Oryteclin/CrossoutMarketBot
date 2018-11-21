@@ -6,13 +6,16 @@ import fr.alexpado.database.annotations.Table;
 import fr.alexpado.database.utils.SQLColumnType;
 import fr.alexpado.database.utils.SQLObject;
 import ovh.akio.cmb.data.CrossoutItem;
+import ovh.akio.cmb.impl.embed.EmbedItem;
+import ovh.akio.cmb.utils.BotUtils;
+import ovh.akio.cmb.utils.Duration;
 import ovh.akio.cmb.utils.WebAPI;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @Table(name = "Watchers")
-public class Watcher {
+public class Watcher implements EmbedItem {
 
     public enum WatcherType {
         CLASSIC(0), WATCH_SELL(1), WATCH_BUY(2);
@@ -130,4 +133,13 @@ public class Watcher {
         }, onFailure);
     }
 
+    @Override
+    public String toString() {
+        switch (this.getWatcherType()) {
+            case CLASSIC: return this.getItem().getName() + " : " + new Duration(this.watchInterval);
+            case WATCH_SELL: return this.getItem().getName() + " *(Sell > " + BotUtils.numberFormat(this.getPriceLimit()) + ")* : " + new Duration(this.watchInterval);
+            case WATCH_BUY: return this.getItem().getName() + " *(Buy < " + BotUtils.numberFormat(this.getPriceLimit()) + ")* : " + new Duration(this.watchInterval);
+            default: return this.getItem().getName();
+        }
+    }
 }

@@ -8,6 +8,7 @@ import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.impl.embed.EmbedItem;
 import ovh.akio.cmb.impl.embed.EmbedPage;
+import ovh.akio.cmb.utils.BotUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,11 +49,7 @@ public class WatchListCommand extends Command {
 
             Collection<Watcher> watchers = this.getBot().getWatcherManager().getUserWatchers(event.getAuthor());
 
-            ArrayList<EmbedItem> items = new ArrayList<>();
-
-            for (Watcher watcher : watchers) {
-                items.add(watcher.getItem());
-            }
+            ArrayList<EmbedItem> items = new ArrayList<>(watchers);
 
             if(items.size() == 0) {
                 message.editMessage(new EmbedBuilder().setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl()).setDescription("You haven't any watcher.").setColor(Color.ORANGE).build()).queue();
