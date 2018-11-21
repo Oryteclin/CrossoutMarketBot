@@ -1,21 +1,23 @@
 package ovh.akio.cmb;
 
+import fr.alexpado.database.Database;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONObject;
+import ovh.akio.cmb.data.discord.DiscordGuild;
+import ovh.akio.cmb.data.discord.DiscordUser;
+import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.logging.Logger;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.DatabaseUpdater;
 import ovh.akio.cmb.utils.Duration;
-import ovh.akio.cmb.utils.TimerWatch;
+import ovh.akio.cmb.watcher.WatcherManager;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
@@ -26,8 +28,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     private CrossoutMarketCommand commandManager;
     private boolean beta;
-    private TimerWatch timerWatch;
-    private Timer timer = new Timer();
+    private WatcherManager watcherManager;
     private Long startTime = System.currentTimeMillis();
     private LanguageManager languageManager;
     private Database database;
@@ -43,7 +44,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     private void startBot(JSONObject object) {
 
-        this.database = new Database();
+        this.database = new Database("data/");
 
         JDABuilder builder = new JDABuilder(AccountType.BOT);
 
@@ -70,10 +71,6 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     public CrossoutMarketCommand getCommandManager() {
         return commandManager;
-    }
-
-    public TimerWatch getTimerWatch() {
-        return timerWatch;
     }
 
     public String getUptime() {
@@ -118,6 +115,9 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     }
 
+    public WatcherManager getWatcherManager() {
+        return watcherManager;
+    }
 
     @Override
     public void onReady(ReadyEvent event) {
@@ -129,19 +129,29 @@ public class CrossoutMarketBot extends ListenerAdapter {
         Logger.info("Registering listeners...");
         event.getJDA().addEventListener(new DatabaseUpdater(this));
         Logger.info("Updating database...");
+
+        try {
+            new DiscordGuild(this.database).getSqlObject().createTable();
+            new DiscordUser(this.database).getSqlObject().createTable();
+            new Watcher(this.database).getSqlObject().createTable();
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
         event.getJDA().getUsers().forEach(user ->
-                this.getDatabase().execute("INSERT INTO DiscordUser (discordID, name, avatar, watcherPaused) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), avatar = VALUES(avatar)",
+                this.getDatabase().execute("INSERT INTO Users (discordID, name, avatar, watcherPaused) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), avatar = VALUES(avatar)",
                         user.getIdLong(), user.getName(), user.getAvatarUrl() == null ? "" : user.getAvatarUrl(), false)
         );
         event.getJDA().getGuilds().forEach(guild ->
-                this.getDatabase().execute("INSERT INTO DiscordGuild (discordID, name, icon, joinedDate, owner, language) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), owner = VALUES(owner)",
+                this.getDatabase().execute("INSERT INTO Guilds (discordID, name, icon, joinedDate, owner, language) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), owner = VALUES(owner)",
                         guild.getIdLong(), guild.getName(), guild.getIconUrl() == null ? "" : guild.getIconUrl(),
                         guild.getSelfMember().getJoinDate().toEpochSecond(), guild.getOwner().getUser().getIdLong(), "English")
         );
         this.convertConfigurationFiles();
         Logger.info("Loading Watch Service...");
-        this.timerWatch = new TimerWatch(this, event.getJDA());
-        this.timer.scheduleAtFixedRate(this.timerWatch, 0L, 30 * 60 * 1000);
+        this.watcherManager = new WatcherManager(event.getJDA(), this.database);
         Logger.info("Bot ready !");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);

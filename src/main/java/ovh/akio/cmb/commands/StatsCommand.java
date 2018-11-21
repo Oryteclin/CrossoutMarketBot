@@ -44,7 +44,7 @@ public class StatsCommand extends Command {
         builder.setColor(Color.CYAN);
 
         builder.addField(this.getTranslation(event, "Command.Stats.Uptime"), this.getBot().getUptime(), false);
-        builder.addField(this.getTranslation(event, "Command.Stats.Watchers"), this.getBot().getTimerWatch().getWatcherCount() + "", false);
+        builder.addField(this.getTranslation(event, "Command.Stats.Watchers"), this.getBot().getWatcherManager().getWatcherTotalCount() + "", false);
         builder.addField(this.getTranslation(event, "Command.Stats.Guilds"), event.getJDA().getGuilds().size() + "", false);
         builder.addField(this.getTranslation(event, "Command.Stats.CommandLocalExecute"), this.getBot().getGuildCommandCount(event.getGuild()) + "", false);
         builder.addField(this.getTranslation(event, "Command.Stats.CommandGlobalExecute"), this.getBot().getGlobalCommandCount() + "", false);

@@ -1,10 +1,13 @@
 package ovh.akio.cmb.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
 import ovh.akio.cmb.data.CrossoutItem;
 import ovh.akio.cmb.data.WatchMemory;
+import ovh.akio.cmb.data.discord.Watcher;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.WebAPI;
@@ -58,31 +61,11 @@ public class WatchCommand extends Command {
                                         .build()
                         ).queue();
                     }else if(result.size() == 1) {
-                        WatchMemory memory = new WatchMemory(result.get(0), event.getAuthor());
-                        this.getBot().getTimerWatch().addWatch(memory, aVoid ->
-                                message.editMessage(
-                                        new EmbedBuilder()
-                                                .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), result.get(0).getName()))
-                                                .setColor(Color.GREEN)
-                                                .build()
-                                ).queue()
-                        );
-
+                        this.applyItem(message, event, result.get(0));
                     }else{
-
                         for (CrossoutItem item : result) {
                             if(item.getName().equalsIgnoreCase(query)) {
-                                WatchMemory memory = new WatchMemory(item, event.getAuthor());
-                                this.getBot().getTimerWatch().addWatch(memory, aVoid ->
-                                        message.editMessage(
-                                                new EmbedBuilder()
-                                                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                                        .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), item.getName()))
-                                                        .setColor(Color.GREEN)
-                                                        .build()
-                                        ).queue()
-                                );
+                                this.applyItem(message, event, item);
                                 return;
                             }
                         }
@@ -108,4 +91,25 @@ public class WatchCommand extends Command {
         );
 
     }
+
+    private void applyItem(Message message, GuildMessageReceivedEvent event, CrossoutItem item) {
+        try {
+            Watcher watcher = new Watcher(this.getBot().getDatabase(), event.getAuthor().getIdLong(), item.getId());
+            watcher.setItem(item);
+            watcher.setLastInterval(System.currentTimeMillis());
+
+            this.getBot().getWatcherManager().addWatcher(watcher);
+
+            message.editMessage(
+                    new EmbedBuilder()
+                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                            .setDescription(String.format(this.getTranslation(event, "Command.Watch.Added"), item.getName()))
+                            .setColor(Color.GREEN)
+                            .build()
+            ).queue();
+        } catch (Exception e) {
+            BotUtils.reportException(e);
+        }
+    }
+
 }
