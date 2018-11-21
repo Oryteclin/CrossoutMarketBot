@@ -28,7 +28,7 @@ This file contains all settings for the bot to be able to connect to a database.
  ```
 
 #### Translate the bot
-You can translate the bot in your language by making a pull request using one of the translation file and submitting your in the [languages folder](https://github.com/alexpado/CrossoutMarketBot/tree/master/src/main/languages).
+You can translate the bot in your language by making a pull request using one of the translation file and submitting yours in the [languages folder](https://github.com/alexpado/CrossoutMarketBot/tree/master/src/main/languages).
 Join the Discord server to receive your "Translator" role and get notified when translations need update.
 
 #### Features Request & Bugs Report
