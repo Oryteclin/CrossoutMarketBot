@@ -139,7 +139,7 @@ public class AdvancedWatchCommand extends Command {
                         message.editMessage(
                                 new EmbedBuilder()
                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                                        .setDescription(this.getTranslation(event, "Command.AdvancedWatch.NotFound"))
+                                        .setDescription(String.format(this.getTranslation(event, "Command.AdvancedWatch.NotFound"), crossoutItem.getName()))
                                         .setColor(Color.RED)
                                         .build()
                         ).queue();
