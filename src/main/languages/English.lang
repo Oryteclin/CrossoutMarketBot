@@ -52,6 +52,7 @@ Command.PauseWatch.Paused = You won't receive any notifications until you execut
 Command.PauseWatch.Resumed = You will receive notifications again.
 
 Command.WatcherInterval.Description = Choose the refresh interval for an item.
+Command.WatcherInterval.NumberFormat = Please input a number.
 Command.WatcherInterval.NoItemFound = No item found. Please check the item name with `cm:item <item name>`.
 Command.WatcherInterval.NotFound = You're not currently watching %s.
 Command.WatcherInterval.Edited = The interval for the item %s has been set to %ss.

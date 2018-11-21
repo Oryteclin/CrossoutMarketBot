@@ -54,14 +54,19 @@ public class WatcherIntervalCommand extends Command {
                 try {
                     timeInt = Integer.parseInt(time);
                 } catch (NumberFormatException e) {
-                    event.getChannel().sendMessage("Please input a valid number.").queue();
+                    message.editMessage(
+                            new EmbedBuilder()
+                                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                                    .setDescription(this.getTranslation(event, "Command.WatcherInterval.NumberFormat"))
+                                    .setColor(Color.RED)
+                                    .build()
+                    ).queue();
                     return;
                 }
                 final int finalTime = timeInt;
                 String item = event.getMessage().getContentRaw().replace(command[0] + " " + time + "", "").trim();
 
                 new WebAPI().search(item, crossoutItems -> {
-                    Logger.debug("Finished request");
                     CrossoutItem crossoutItem = null;
                     if(crossoutItems.size() == 1) {
                         crossoutItem = crossoutItems.get(0);
@@ -72,7 +77,6 @@ public class WatcherIntervalCommand extends Command {
                             }
                         }
                         if(crossoutItem == null) {
-                            Logger.debug("Not Found");
                             message.editMessage(
                                     new EmbedBuilder()
                                             .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
@@ -83,7 +87,6 @@ public class WatcherIntervalCommand extends Command {
                             return;
                         }
                     }else{
-                        Logger.debug("No item");
                         message.editMessage(
                                 new EmbedBuilder()
                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
@@ -97,7 +100,6 @@ public class WatcherIntervalCommand extends Command {
                     Logger.debug("Manage");
                     Watcher watcher = this.getBot().getWatcherManager().find(event.getAuthor().getIdLong(), crossoutItem.getId());
                     if(watcher != null) {
-                        Logger.debug("Watcher found");
                         watcher.setWatchInterval(finalTime * 1000L);
                         watcher.getSqlObject().update();
                         message.editMessage(
@@ -108,7 +110,6 @@ public class WatcherIntervalCommand extends Command {
                                         .build()
                         ).queue();
                     }else{
-                        Logger.debug("Watcher not found");
                         message.editMessage(
                                 new EmbedBuilder()
                                         .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
