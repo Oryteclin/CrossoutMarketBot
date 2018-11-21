@@ -7,8 +7,8 @@ import ovh.akio.cmb.utils.BotUtils;
 import ovh.akio.cmb.utils.language.Translation;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class LanguageManager {
@@ -29,10 +29,13 @@ public class LanguageManager {
             Logger.error("Can't load any languages. The bot can't send message without English translation file.");
             System.exit(-1);
         }
+        ArrayList<String> languagesName = new ArrayList<>();
         for (File language : languages) {
             String languageName = language.getName().replace(".lang", "");
+            languagesName.add(languageName);
             this.translations.put(languageName, new Translation(this, languageName));
         }
+        Logger.debug("Languages : " + Arrays.toString(languagesName.toArray()));
     }
 
     public Translation getTranslation(String language) {
@@ -40,6 +43,7 @@ public class LanguageManager {
         if(translation == null) {
             File langFile = new File(String.format("languages/%s.lang", language));
             if(langFile.exists()) {
+                Logger.debug("Lazy load language : " + language);
                 // Load language at runtime. Allow to load new language without updating the bot.
                 this.translations.put(language, new Translation(this, language));
             }
@@ -48,7 +52,19 @@ public class LanguageManager {
     }
 
     public boolean translationExists(String language) {
-        return this.translations.keySet().contains(language);
+        Translation translation = this.translations.get(language);
+        if(translation == null) {
+            File langFile = new File(String.format("languages/%s.lang", language));
+            if(langFile.exists()) {
+                Logger.debug("Lazy load language : " + language);
+                // Load language at runtime. Allow to load new language without updating the bot.
+                this.translations.put(language, new Translation(this, language));
+                return true;
+            }
+        }else{
+            return true;
+        }
+        return false;
     }
 
     public void setTranslationForGuild(Guild guild, String language) {
