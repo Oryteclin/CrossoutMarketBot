@@ -1,6 +1,7 @@
 Command.Invite = Cliquez ici pour inviter le bot.
 Command.NotFound = Huh, cette commande n'existe pas :cry: :cry:
 Command.AdminOnly = Vous devez avoir la permission ADMINISTRATEUR pour utiliser cette commande.
+Command.Error = Quelque chose s'est mal passé et l'erreur a été envoyée.
 
 Command.Changelog.Description = Voir les notes de mise à jour.
 
@@ -63,8 +64,8 @@ Command.AdvancedWatch.Description = Définissez les propriétés du watcher pour
 Command.AdvancedWatch.NumberFormat = Merci d'entrer un nombre correct.
 Command.AdvancedWatch.NoItemFound = Aucun item trouvé. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
 Command.AdvancedWatch.NotFound = Vous n'avez aucun watcher pour l'item %s.
-Command.AdvancedWatch.Sell = Vous serez notifié quand le prix de vente de l'item %s sera supérieur à %s Coins.
-Command.AdvancedWatch.Buy = Vous serez notifié quand le prix d'achat de l'item %s sera inférieur à %s Coins.
+Command.AdvancedWatch.Sell = Vous serez notifié quand vous pourrez vendre l'item %s au-delà de %s Coins.
+Command.AdvancedWatch.Buy = Vous serez notifié quand vousp pourrez acheter l'item %s en dessous de %s Coins.
 Command.AdvancedWatch.MultipleFound = Plusieurs items trouvés. Veuillez vérifier le nom avec la commande `cm:item <item name>`.
 Command.AdvancedWatch.CantProcess = Impossible d'honnorer la requête : %s.
 

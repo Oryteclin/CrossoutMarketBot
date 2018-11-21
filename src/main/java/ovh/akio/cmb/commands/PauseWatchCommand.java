@@ -3,6 +3,7 @@ package ovh.akio.cmb.commands;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import ovh.akio.cmb.CrossoutMarketBot;
+import ovh.akio.cmb.data.discord.DiscordUser;
 import ovh.akio.cmb.impl.command.Command;
 import ovh.akio.cmb.utils.BotUtils;
 
@@ -41,31 +42,31 @@ public class PauseWatchCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        this.getBot().getDatabase().execute("UPDATE DiscordUser SET watcherPaused = !watcherPaused WHERE discordID = ?", event.getAuthor().getIdLong());
-
-        ResultSet rs = this.getBot().getDatabase().query("SELECT watcherPaused FROM DiscordUser WHERE discordID = ?", event.getAuthor().getIdLong());
 
         try {
-            if (rs.next()) {
-                boolean paused = rs.getBoolean("watcherPaused");
-                if (paused) {
-                    event.getChannel().sendMessage(new EmbedBuilder()
-                            .setColor(Color.ORANGE)
-                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                            .setDescription(this.getTranslation(event, "Command.PauseWatch.Paused")).build()).queue();
-                }else {
-                    event.getChannel().sendMessage(new EmbedBuilder()
-                            .setColor(Color.GREEN)
-                            .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
-                            .setDescription(this.getTranslation(event, "Command.PauseWatch.Resumed")).build()).queue();
-                }
-            }
+            DiscordUser user = new DiscordUser(this.getBot().getDatabase(), event.getAuthor().getIdLong());
+            user.getSqlObject().select();
 
-        } catch (SQLException e) {
-            event.getChannel().sendMessage("Something went wrong and the dev has been notified.").queue();
+            if(!user.isWatcherPaused()) {
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setColor(Color.ORANGE)
+                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                        .setDescription(this.getTranslation(event, "Command.PauseWatch.Paused")).build()).queue();
+            }else{
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setColor(Color.GREEN)
+                        .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                        .setDescription(this.getTranslation(event, "Command.PauseWatch.Resumed")).build()).queue();
+            }
+            user.setWatcherPaused(!user.isWatcherPaused());
+            user.getSqlObject().update();
+        } catch (Exception e) {
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setColor(Color.RED)
+                    .setAuthor(this.getTranslation(event, "Command.Invite"), "https://discordapp.com/api/oauth2/authorize?client_id=500032551977746453&permissions=59456&scope=bot", event.getJDA().getSelfUser().getAvatarUrl())
+                    .setDescription(this.getTranslation(event, "Command.Error")).build()).queue();
             BotUtils.reportException(e);
         }
 
-        this.getBot().getDatabase().close(rs);
     }
 }
