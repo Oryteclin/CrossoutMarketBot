@@ -4,6 +4,7 @@ Command.AdminOnly = You must have the ADMINISTRATOR permission to do this.
 Command.Error = Something went wrong and the dev(s) has been notified.
 
 Command.Changelog.Description = Show changelog.
+Command.Changelog.Full = View full changelog
 
 Command.Help.Description = Some helpful help :eyes:
 Command.Help.Embed.Description = Oh ? You need some help with the commands ? Got it !

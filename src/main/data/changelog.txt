@@ -1,3 +1,13 @@
+[1.7.1]
+• Fixed error when user is updated without existing in database ?
+• Fixed cm:pausewatch command
+• Fixed item name "Your not currently watching %s" in watcherinterval command
+• Added watcher type & interval on cm:watchlist
+• Fixed ambigous description for command advancedwatch
+• Changelog command now show only changelog for last version
+• Cleaner code in CrossoutMarketBot.java
+• Fixed private commands (for dev only)
+
 [1.7.0]
 • Configuration & Watchers not saved in file anymore. (MySQL)
 • Better uptime presentation (added day + hiding 0 values)
