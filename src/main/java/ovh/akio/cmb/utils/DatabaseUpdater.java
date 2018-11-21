@@ -1,7 +1,6 @@
 package ovh.akio.cmb.utils;
 
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -23,11 +22,20 @@ public class DatabaseUpdater extends ListenerAdapter {
         this.bot = bot;
     }
 
+    private void selectUserOrInsert(DiscordUser user) {
+        user.getSqlObject().select((aVoid -> {
+            user.setWatcherPaused(false);
+            user.setAvatar(user.getAvatar());
+            user.setName(user.getName());
+            user.getSqlObject().insert();
+        }));
+    }
+
     @Override
     public void onUserUpdateName(UserUpdateNameEvent event) {
         try {
             DiscordUser user = new DiscordUser(this.bot.getDatabase(), event.getUser().getIdLong());
-            user.getSqlObject().select();
+            this.selectUserOrInsert(user);
             user.setName(event.getNewName());
             user.getSqlObject().update();
         } catch (Exception e) {
@@ -39,7 +47,7 @@ public class DatabaseUpdater extends ListenerAdapter {
     public void onUserUpdateAvatar(UserUpdateAvatarEvent event) {
         try {
             DiscordUser user = new DiscordUser(this.bot.getDatabase(), event.getUser().getIdLong());
-            user.getSqlObject().select();
+            this.selectUserOrInsert(user);
             user.setAvatar(event.getNewAvatarUrl());
             user.getSqlObject().update();
         } catch (Exception e) {
@@ -49,15 +57,6 @@ public class DatabaseUpdater extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-
-        event.getGuild().getMembers().forEach(member -> {
-            try {
-                DiscordUser user = new DiscordUser(this.bot.getDatabase(), member.getUser());
-                user.getSqlObject().insert();
-            } catch (Exception e) {
-                BotUtils.reportException(e);
-            }
-        });
 
         try {
             DiscordGuild guild = new DiscordGuild(this.bot.getDatabase(), event.getGuild());
@@ -80,7 +79,7 @@ public class DatabaseUpdater extends ListenerAdapter {
     public void onGuildUpdateIcon(GuildUpdateIconEvent event) {
         try {
             DiscordGuild guild = new DiscordGuild(this.bot.getDatabase(), event.getGuild().getIdLong());
-            guild.getSqlObject().select();
+            guild.getSqlObject().select(null);
             guild.setIcon(event.getNewIconUrl());
             guild.getSqlObject().update();
         } catch (Exception e) {
@@ -92,7 +91,7 @@ public class DatabaseUpdater extends ListenerAdapter {
     public void onGuildUpdateName(GuildUpdateNameEvent event) {
         try {
             DiscordGuild guild = new DiscordGuild(this.bot.getDatabase(), event.getGuild().getIdLong());
-            guild.getSqlObject().select();
+            guild.getSqlObject().select(null);
             guild.setName(event.getNewName());
             guild.getSqlObject().update();
         } catch (Exception e) {
@@ -104,7 +103,7 @@ public class DatabaseUpdater extends ListenerAdapter {
     public void onGuildUpdateOwner(GuildUpdateOwnerEvent event) {
         try {
             DiscordGuild guild = new DiscordGuild(this.bot.getDatabase(), event.getGuild().getIdLong());
-            guild.getSqlObject().select();
+            guild.getSqlObject().select(null);
             guild.setOwner(event.getEntity().getOwnerIdLong());
             guild.getSqlObject().update();
         } catch (Exception e) {

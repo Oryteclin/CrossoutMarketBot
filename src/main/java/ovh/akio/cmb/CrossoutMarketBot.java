@@ -111,7 +111,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
                 for (String guildID : jsonContent.keySet()) {
                     try {
                         DiscordGuild guild = new DiscordGuild(this.database, Long.parseLong(guildID));
-                        guild.getSqlObject().select();
+                        guild.getSqlObject().select(null);
                         guild.setLanguage(jsonContent.getString(guildID));
                         guild.getSqlObject().update();
                     } catch (Exception e) {
@@ -127,21 +127,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
 
     }
 
-    public WatcherManager getWatcherManager() {
-        return watcherManager;
-    }
-
-    @Override
-    public void onReady(ReadyEvent event) {
-        Guild myGuild = event.getJDA().getGuildById(508012982287073280L);
-        TextChannel logs = myGuild.getTextChannelById(508020752994271242L);
-        BotUtils.setReportChannel(logs);
-        Logger.info("Loading languages...");
-        languageManager = new LanguageManager(this);
-        Logger.info("Registering listeners...");
-        event.getJDA().addEventListener(new DatabaseUpdater(this));
-        Logger.info("Updating database...");
-
+    private void createDatabaseStructure() {
         try {
             new DiscordGuild(this.database).getSqlObject().createTable();
             new DiscordUser(this.database).getSqlObject().createTable();
@@ -151,59 +137,42 @@ public class CrossoutMarketBot extends ListenerAdapter {
             e.printStackTrace();
             System.exit(-1);
         }
+    }
 
+    public WatcherManager getWatcherManager() {
+        return watcherManager;
+    }
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        Guild myGuild = event.getJDA().getGuildById(508012982287073280L);
+        TextChannel logs = myGuild.getTextChannelById(508020752994271242L);
+        BotUtils.setReportChannel(logs);
+
+        Logger.info("Loading languages...");
+        languageManager = new LanguageManager(this);
+
+        Logger.info("Registering listeners...");
+        event.getJDA().addEventListener(new DatabaseUpdater(this));
+
+        Logger.info("Updating database...");
+        this.createDatabaseStructure();
         event.getJDA().getGuilds().forEach(guild ->
                 this.getDatabase().execute("INSERT INTO Guilds (discordID, name, icon, joinedDate, owner, language) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), owner = VALUES(owner)",
                         guild.getIdLong(), guild.getName(), guild.getIconUrl() == null ? "" : guild.getIconUrl(),
                         guild.getSelfMember().getJoinDate().toEpochSecond(), guild.getOwner().getUser().getIdLong(), "English")
         );
         this.convertConfigurationFiles();
+
         Logger.info("Loading Watch Service...");
         this.watcherManager = new WatcherManager(event.getJDA(), this.database);
+
         Logger.info("Bot ready !");
         event.getJDA().getPresence().setGame(Game.playing("marketbot in " + event.getJDA().getGuilds().size() + " servers."));
         super.onReady(event);
-
-
     }
 
-    public static boolean checkPermission(Guild guild, TextChannel channel, Permission permission) {
-        boolean permissionAllowed;
-        permissionAllowed = guild.getSelfMember().hasPermission(permission);
 
-        int rolePower = 0;
-
-        for (Role role : guild.getSelfMember().getRoles()) {
-            if(role.getPosition() > rolePower) {
-                rolePower = role.getPosition();
-                for (Permission rolePermission : role.getPermissions()) {
-                    if(rolePermission == permission) permissionAllowed = true;
-                }
-                PermissionOverride permissionOverride = channel.getPermissionOverride(role);
-
-                if(permissionOverride != null) {
-                    for (Permission rolePermission : channel.getPermissionOverride(role).getAllowed()) {
-                        if(rolePermission == permission) permissionAllowed = true;
-                    }
-
-                    for (Permission rolePermission : channel.getPermissionOverride(role).getDenied()) {
-                        if(rolePermission == permission) permissionAllowed = false;
-                    }
-                }
-            }
-        }
-        PermissionOverride permissionOverride = channel.getPermissionOverride(guild.getSelfMember());
-        if(permissionOverride != null) {
-            for (Permission permission1 : permissionOverride.getAllowed()) {
-                if (permission1 == permission) permissionAllowed = true;
-            }
-
-            for (Permission permission1 : permissionOverride.getDenied()) {
-                if (permission1 == permission) permissionAllowed = false;
-            }
-        }
-        return permissionAllowed;
-    }
 
     private HashMap<Long, Integer> commandsTrack = new HashMap<>();
 
@@ -229,7 +198,7 @@ public class CrossoutMarketBot extends ListenerAdapter {
                     user.getIdLong(), user.getName(), user.getAvatarUrl() == null ? "" : user.getAvatarUrl(), false);
 
             if(event.getGuild() != null) {
-                if (!CrossoutMarketBot.checkPermission(event.getGuild(), event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
+                if (!BotUtils.checkPermission(event.getGuild(), event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
                     event.getChannel().sendMessage(this.getLanguageManager().getTranslationForGuild(event.getGuild()).getString("Permission.MESSAGE_EMBED_LINK")).queue();
                     return;
                 }
@@ -249,45 +218,14 @@ public class CrossoutMarketBot extends ListenerAdapter {
     public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
         if(event.getAuthor().getIdLong() == 149279150648066048L) {
             if(event.getMessage().getContentRaw().startsWith("setLogLevel:")) {
-                String level = event.getMessage().getContentRaw().replace("setLogLevel:", "");
-                switch (level) {
-                    case "debug":
-                        Logger.setShowDebug(true);
-                        Logger.setShowInfo(true);
-                        Logger.setShowWarning(true);
-                        Logger.setShowError(true);
-                        Logger.setShowFatal(true);
-                        break;
-                    case "info":
-                        Logger.setShowDebug(false);
-                        Logger.setShowInfo(true);
-                        Logger.setShowWarning(true);
-                        Logger.setShowError(true);
-                        Logger.setShowFatal(true);
-                        break;
-                    case "warning":
-                        Logger.setShowDebug(false);
-                        Logger.setShowInfo(false);
-                        Logger.setShowWarning(true);
-                        Logger.setShowError(true);
-                        Logger.setShowFatal(true);
-                        break;
-                    case "error":
-                        Logger.setShowDebug(false);
-                        Logger.setShowInfo(false);
-                        Logger.setShowWarning(false);
-                        Logger.setShowError(true);
-                        Logger.setShowFatal(true);
-                        break;
-                    case "fatal":
-                        Logger.setShowDebug(false);
-                        Logger.setShowInfo(false);
-                        Logger.setShowWarning(false);
-                        Logger.setShowError(false);
-                        Logger.setShowFatal(true);
-                        break;
+                String levelStr = event.getMessage().getContentRaw().replace("setLogLevel:", "");
+                try {
+                    Logger.Level level = Logger.Level.valueOf(levelStr);
+                    BotUtils.setLogOutputLevel(level);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
                 }
-            }else if(event.getMessage().getContentRaw().endsWith("reload:")) {
+            }else if(event.getMessage().getContentRaw().startsWith("reload:")) {
                 String target = event.getMessage().getContentRaw().replace("reload:", "");
                 if(target.equals("languages")) {
                     this.getLanguageManager().loadTranslations();
@@ -303,4 +241,5 @@ public class CrossoutMarketBot extends ListenerAdapter {
     public Database getDatabase() {
         return database;
     }
+
 }

@@ -2,6 +2,10 @@ package ovh.akio.cmb.logging;
 
 public class Logger {
 
+    public enum Level {
+        Debug, Info, Warning, Error, Fatal
+    }
+
     private static boolean showInfo = true;
     private static boolean showDebug = true;
     private static boolean showWarning = true;

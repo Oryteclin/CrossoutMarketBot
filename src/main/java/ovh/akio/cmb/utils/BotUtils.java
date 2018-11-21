@@ -1,5 +1,9 @@
 package ovh.akio.cmb.utils;
 
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.PermissionOverride;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.htmlparser.jericho.Renderer;
 import net.htmlparser.jericho.Source;
@@ -55,9 +59,43 @@ public class BotUtils {
         return result.toString().split("(?<=\\G.{1994})");
     }
 
+    public static boolean checkPermission(Guild guild, TextChannel channel, Permission permission) {
+        boolean permissionAllowed;
+        permissionAllowed = guild.getSelfMember().hasPermission(permission);
 
+        int rolePower = 0;
 
+        for (Role role : guild.getSelfMember().getRoles()) {
+            if(role.getPosition() > rolePower) {
+                rolePower = role.getPosition();
+                for (Permission rolePermission : role.getPermissions()) {
+                    if(rolePermission == permission) permissionAllowed = true;
+                }
+                PermissionOverride permissionOverride = channel.getPermissionOverride(role);
 
+                if(permissionOverride != null) {
+                    for (Permission rolePermission : channel.getPermissionOverride(role).getAllowed()) {
+                        if(rolePermission == permission) permissionAllowed = true;
+                    }
+
+                    for (Permission rolePermission : channel.getPermissionOverride(role).getDenied()) {
+                        if(rolePermission == permission) permissionAllowed = false;
+                    }
+                }
+            }
+        }
+        PermissionOverride permissionOverride = channel.getPermissionOverride(guild.getSelfMember());
+        if(permissionOverride != null) {
+            for (Permission permission1 : permissionOverride.getAllowed()) {
+                if (permission1 == permission) permissionAllowed = true;
+            }
+
+            for (Permission permission1 : permissionOverride.getDenied()) {
+                if (permission1 == permission) permissionAllowed = false;
+            }
+        }
+        return permissionAllowed;
+    }
 
     public static int[] getPageBound(int size, int page, int count) {
         int startAt = (page-1) * count;
@@ -99,6 +137,46 @@ public class BotUtils {
             onSuccess.accept(new String(readAllBytes));
         } catch (IOException e) {
             onFailure.accept(e);
+        }
+    }
+
+    public static void setLogOutputLevel(Logger.Level level) {
+        switch (level) {
+            case Debug:
+                Logger.setShowDebug(true);
+                Logger.setShowInfo(true);
+                Logger.setShowWarning(true);
+                Logger.setShowError(true);
+                Logger.setShowFatal(true);
+                break;
+            case Info:
+                Logger.setShowDebug(false);
+                Logger.setShowInfo(true);
+                Logger.setShowWarning(true);
+                Logger.setShowError(true);
+                Logger.setShowFatal(true);
+                break;
+            case Warning:
+                Logger.setShowDebug(false);
+                Logger.setShowInfo(false);
+                Logger.setShowWarning(true);
+                Logger.setShowError(true);
+                Logger.setShowFatal(true);
+                break;
+            case Error:
+                Logger.setShowDebug(false);
+                Logger.setShowInfo(false);
+                Logger.setShowWarning(false);
+                Logger.setShowError(true);
+                Logger.setShowFatal(true);
+                break;
+            case Fatal:
+                Logger.setShowDebug(false);
+                Logger.setShowInfo(false);
+                Logger.setShowWarning(false);
+                Logger.setShowError(false);
+                Logger.setShowFatal(true);
+                break;
         }
     }
 
