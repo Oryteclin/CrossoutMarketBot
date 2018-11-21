@@ -59,6 +59,16 @@ Command.WatcherInterval.Edited = The interval for the item %s has been set to %s
 Command.WatcherInterval.MultipleFound = Multiple items found. Please check the item name with `cm:item <item name>`.
 Command.WatcherInterval.CantProcess = Couldn't process your request : %s
 
+Command.AdvancedWatch.Description = Set the watch properties to watch particular price changes.
+Command.AdvancedWatch.NumberFormat = Please input a number.
+Command.AdvancedWatch.NoItemFound = No item found. Please check the item name with `cm:item <item name>`.
+Command.AdvancedWatch.NotFound = You're not currently watching %s.
+Command.AdvancedWatch.Sell = You will be notifed when item %s sell price will be over %s Coins.
+Command.AdvancedWatch.Buy = You will be notifed when item %s buy price will be under %s Coins.
+Command.AdvancedWatch.MultipleFound = Multiple items found. Please check the item name with `cm:item <item name>`.
+Command.AdvancedWatch.CantProcess = Couldn't process your request : %s
+
+
 Item.Currency = Coins
 Item.NoDescription = No description for this item.
 Item.Buy = Buy it for
