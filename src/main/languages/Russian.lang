@@ -4,7 +4,7 @@ Command.AdminOnly = Вы должны иметь право АДМИНИСТРА
 Command.Error = Что-то пошло не так, и разработчик(и) был(и) оповещен(ы).
 
 Command.Changelog.Description = Показать список изменений.
-Command.Changelog.Full = View full changelog
+Command.Changelog.Full = Посмотреть полный список изменений
 
 Command.Help.Description = Немного полезной помощи :eyes:
 Command.Help.Embed.Description = Ой ? Вам нужна помощь с командами ? Понял !
